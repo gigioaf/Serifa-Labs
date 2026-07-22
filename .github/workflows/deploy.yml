@@ -59,6 +59,11 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          # FTP simples manda usuário e senha em texto claro pela internet.
+          # A Hostinger aceita FTPS (TLS explícito, mesma porta 21). Se o
+          # handshake falhar por causa do certificado, acrescente uma linha
+          # `security: loose` aqui antes de cogitar voltar para `ftp`.
+          protocol: ftps
           # A barra final importa: sem ela o conteúdo vai para o lugar errado.
           local-dir: ./dist/
           server-dir: /public_html/
