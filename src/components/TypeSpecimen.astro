@@ -1,0 +1,97 @@
+---
+// Interactive type specimen — a "Fraunces ao vivo" playground.
+//
+// Vanilla island (no React): the client script below drives font-variation-settings
+// on the specimen word from range inputs. Fraunces is a variable font and the
+// (NB: never write the literal script tag inside frontmatter comments — Astro's
+//  dev dependency scanner extracts it as a real block and the build/dev breaks.)
+// self-hosted `opsz` cut exposes the wght + opsz axes, so both sliders map to
+// real axes. The italic toggle switches to the loaded italic face.
+//
+// Guards / graceful degradation:
+//   • Without JS, the specimen renders at the markup defaults (still looks good).
+//   • It's user-driven, not auto-motion, so it works under prefers-reduced-motion.
+//   • Keyboard-accessible: labelled range inputs, a toggle button (aria-pressed),
+//     and a text field to type your own word.
+---
+<section class="typelab" id="tipografia">
+  <div class="wrap">
+    <div class="eyebrow reveal">Sistema tipográfico</div>
+    <h2 class="serif reveal">Fraunces, ao seu <em>comando</em>.</h2>
+
+    <div class="typelab-grid reveal">
+      <div class="specimen">
+        <div class="specimen-word serif" id="ty-word" style="font-size:clamp(64px,13vw,150px)">Serifa</div>
+      </div>
+
+      <div class="controls" role="group" aria-label="Controles do specimen tipográfico">
+        <div class="ctl">
+          <label for="ty-wght">Peso <span class="val" id="ty-wght-v">340</span></label>
+          <input type="range" id="ty-wght" min="100" max="900" step="1" value="340" />
+        </div>
+        <div class="ctl">
+          <label for="ty-opsz">Óptico <span class="val" id="ty-opsz-v">72</span></label>
+          <input type="range" id="ty-opsz" min="9" max="144" step="1" value="72" />
+        </div>
+        <div class="ctl">
+          <label for="ty-size">Tamanho <span class="val" id="ty-size-v">108&thinsp;px</span></label>
+          <input type="range" id="ty-size" min="40" max="180" step="1" value="108" />
+        </div>
+        <div class="ctl ctl-row">
+          <button type="button" class="chip-toggle specular" id="ty-ital" aria-pressed="false">Itálico</button>
+          <input
+            class="word-input"
+            id="ty-text"
+            type="text"
+            value="Serifa"
+            maxlength="14"
+            spellcheck="false"
+            autocomplete="off"
+            aria-label="Texto do specimen"
+          />
+        </div>
+        <p class="ty-hint">Fraunces é uma fonte variável — arraste para ver os eixos de peso e tamanho óptico ao vivo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Self-contained type-specimen island.
+  const word = document.getElementById('ty-word');
+  const wght = document.getElementById('ty-wght') as HTMLInputElement | null;
+  const opsz = document.getElementById('ty-opsz') as HTMLInputElement | null;
+  const size = document.getElementById('ty-size') as HTMLInputElement | null;
+  const ital = document.getElementById('ty-ital');
+  const text = document.getElementById('ty-text') as HTMLInputElement | null;
+  const wghtV = document.getElementById('ty-wght-v');
+  const opszV = document.getElementById('ty-opsz-v');
+  const sizeV = document.getElementById('ty-size-v');
+
+  if (word && wght && opsz && size) {
+    const apply = () => {
+      word.style.fontVariationSettings = `'opsz' ${opsz.value}, 'wght' ${wght.value}`;
+      word.style.fontSize = `${size.value}px`;
+      if (wghtV) wghtV.textContent = wght.value;
+      if (opszV) opszV.textContent = opsz.value;
+      if (sizeV) sizeV.innerHTML = `${size.value}&thinsp;px`;
+    };
+    [wght, opsz, size].forEach((el) => el.addEventListener('input', apply));
+    apply();
+
+    if (ital) {
+      ital.addEventListener('click', () => {
+        const on = ital.getAttribute('aria-pressed') === 'true';
+        ital.setAttribute('aria-pressed', String(!on));
+        word.style.fontStyle = on ? 'normal' : 'italic';
+      });
+    }
+
+    if (text) {
+      text.addEventListener('input', () => {
+        // keep the box height stable when emptied
+        word.textContent = text.value || ' ';
+      });
+    }
+  }
+</script>

@@ -1,0 +1,28 @@
+# Netlify deploy config — Serifa Lab (Astro static site).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Long-cache the fingerprinted assets Astro emits under /_astro/.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The self-contained portfolio demos live under /trabalho/. They are static
+# HTML — served as-is, no build step.
+[[headers]]
+  for = "/trabalho/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# --- Netlify Forms alternative to the mailto CTA (currently disabled) ---
+# If you enable the commented contact form in src/components/Closing.astro,
+# uncomment the redirect below so the honeypot-protected form posts to /obrigado.
+# [[redirects]]
+#   from = "/obrigado"
+#   to = "/obrigado/index.html"
+#   status = 200

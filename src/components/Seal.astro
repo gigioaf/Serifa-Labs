@@ -1,0 +1,26 @@
+---
+// Selo giratório do herói — "circular text" (porte vanilla do React Bits
+// Circular Text). O texto orbita o "S" do logo (parado no centro), substituindo
+// a antiga marca d'água vertical "SERIFA".
+//
+// Cada caractere é uma <span> que preenche o círculo e é rotacionada para a sua
+// posição; a rotação contínua é um @keyframes em CSS (parado em
+// prefers-reduced-motion). O parallax leve de scroll/mouse vem via `.seal`
+// (effects-gsap.ts). Decorativo (aria-hidden). Texto editável abaixo.
+// (os espaços não colapsam por causa do `white-space:pre` em .circular-text span)
+const text = 'SERIFA LAB · DESIGN E CÓDIGO · ';
+const chars = [...text];
+const step = 360 / chars.length;
+---
+<div class="seal-wrap" aria-hidden="true">
+  <div class="seal">
+    <div class="circular-text">
+      {
+        chars.map((ch, i) => (
+          <span style={`transform:rotate(${(i * step).toFixed(2)}deg)`}>{ch}</span>
+        ))
+      }
+    </div>
+    <span class="seal-mark"><i class="bub b1"></i><i class="bub b2"></i><i class="bub b3"></i></span>
+  </div>
+</div>

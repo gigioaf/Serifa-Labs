@@ -1,0 +1,43 @@
+---
+// Footer. Big wordmark lockup ([logo] + "LAB"). Work + Contact + Social links
+// come from the data files (studio.json → social).
+import studio from '../data/studio.json';
+import projects from '../data/projects.json';
+
+// Ano do aviso de copyright: o do build, não `studio.founded` (esse é 2025, o
+// ano de fundação, e alimenta o foundingDate do JSON-LD). Assim o rodapé se
+// atualiza sozinho a cada deploy em vez de envelhecer.
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-word">
+        <span class="brand-icon foot-icon" aria-hidden="true"><i class="bub b1"></i><i class="bub b2"></i><i class="bub b3"></i></span>
+        <span class="logo-mark" role="img" aria-label="Serifa Lab"></span><span class="lab">LAB</span>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4>Navegar</h4>
+          <a href="#servicos">Serviços</a>
+          <a href="#trabalho">Trabalho</a>
+          <a href="#processo">Processo</a>
+        </div>
+        <div class="foot-col">
+          <h4>Trabalho</h4>
+          {projects.map((p) => <a href={p.route}>{p.name}</a>)}
+        </div>
+        <div class="foot-col">
+          <h4>Contato</h4>
+          <a href={`mailto:${studio.email}`}>{studio.email}</a>
+          <p>{studio.address.city} · {studio.address.country}</p>
+        </div>
+        <div class="foot-col">
+          <h4>Social</h4>
+          {studio.social.map((s) => <a href={s.url} target="_blank" rel="noopener">{s.label}</a>)}
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom"><span>© {year} {studio.name}. Todos os direitos reservados.</span><span>Oss</span></div>
+  </div>
+</footer>

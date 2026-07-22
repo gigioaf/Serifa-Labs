@@ -1,0 +1,43 @@
+---
+// Work — the selected-projects grid (data/projects.json). Each card's mini-art
+// is pure CSS (.pv-<art> in global.css) and links to the case page under
+// /trabalho/. On hover, the project's real cover screenshot fades in over the
+// CSS art (cover comes from data/cases.json, matched by `art`). The custom
+// cursor becomes a "Ver →" seal over these cards.
+import projects from '../data/projects.json';
+import cases from '../data/cases.json';
+
+// art → cover screenshot (so the home grid can reveal the real work on hover)
+const coverByArt = Object.fromEntries(cases.map((c) => [c.art, c.cover]));
+---
+<section class="work" id="trabalho">
+  <div class="wrap head">
+    <h2 class="serif reveal">Trabalho selecionado</h2>
+    <p class="reveal">Os projetos que já saíram do estúdio.</p>
+  </div>
+
+  <div class="wrap work-grid">
+    {
+      projects.map((p) => (
+        <a class="pcard reveal" href={p.route} aria-label={`Ver projeto: ${p.name}`}>
+          <div class:list={['ph', `pv-${p.art}`]}>
+            {coverByArt[p.art] && (
+              <div class="pv-frame">
+                <div class="pv-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+                <img class="pv-shot" src={coverByArt[p.art]} alt="" loading="lazy" decoding="async" />
+              </div>
+            )}
+            <span class="pv-name">{p.display}</span>
+          </div>
+          <div class="cap">
+            <div>
+              <div class="tag">{p.tags}</div>
+              <h3>{p.name}</h3>
+            </div>
+            <span class="yr">{p.year}</span>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</section>

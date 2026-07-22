@@ -1,0 +1,32 @@
+---
+// Palette specimen — the colour system, matching the tokens in global.css.
+const swatches = [
+  { name: 'Obsidian', role: 'Primary', bg: '#0A0A0F', fg: '#F4F4F6', hex: '#0A0A0F', rgb: '10 / 10 / 15', cmyk: '33 / 33 / 0 / 94' },
+  { name: 'Porcelain', role: 'Primary', bg: '#F4F4F6', fg: '#0A0A0F', hex: '#F4F4F6', rgb: '244 / 244 / 246', cmyk: '1 / 1 / 0 / 4' },
+  { name: 'Volt Lime', role: 'Accent', bg: '#C6F24E', fg: '#0A0A0F', hex: '#C6F24E', rgb: '198 / 242 / 78', cmyk: '18 / 0 / 68 / 5' },
+  { name: 'Electric Indigo', role: 'Accent', bg: '#5B54E8', fg: '#F4F4F6', hex: '#5B54E8', rgb: '91 / 84 / 232', cmyk: '61 / 64 / 0 / 9' },
+];
+---
+<section class="palette">
+  <div class="wrap">
+    <div class="eyebrow reveal">Sistema de cor</div>
+    <h2 class="serif reveal">A paleta que carrega o nosso caráter.</h2>
+    <div class="swatches">
+      {
+        swatches.map((s) => (
+          <div class="sw reveal">
+            <div class="chip" style={`background:${s.bg}`}>
+              <span style={`color:${s.fg}`}>{s.role}</span>
+            </div>
+            <div class="meta">
+              <div class="name">{s.name}</div>
+              <div class="row"><span>Hex</span><span>{s.hex}</span></div>
+              <div class="row"><span>RGB</span><span>{s.rgb}</span></div>
+              <div class="row"><span>CMYK</span><span>{s.cmyk}</span></div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

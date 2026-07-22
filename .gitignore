@@ -1,0 +1,27 @@
+# build output
+dist/
+.output/
+serifalabs-site.zip
+
+# dependencies
+node_modules/
+
+# astro
+.astro/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment / editor / OS
+.env
+.env.production
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# netlify
+.netlify/

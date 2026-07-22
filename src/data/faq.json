@@ -1,0 +1,22 @@
+[
+  {
+    "q": "Quanto tempo leva um projeto?",
+    "a": "Depende do escopo. Uma identidade costuma levar de 3 a 5 semanas; um site sob medida, de 4 a 8. Na primeira conversa alinhamos um cronograma real, sem surpresas."
+  },
+  {
+    "q": "Como funciona o orçamento?",
+    "a": "Trabalhamos com valor fechado por projeto, definido depois da etapa de descoberta. Assim você sabe exatamente quanto vai investir antes de começarmos a desenhar."
+  },
+  {
+    "q": "Vocês cuidam do desenvolvimento também?",
+    "a": "Sim. Design e código andam juntos aqui — entregamos o site pronto, rápido e responsivo, não só o layout. Também oferecemos manutenção contínua se você quiser."
+  },
+  {
+    "q": "Posso editar o site depois de pronto?",
+    "a": "Com certeza. Entregamos com um CMS ou um sistema de componentes documentado, além de um guia de manutenção, para que sua equipe atualize conteúdo sem depender da gente."
+  },
+  {
+    "q": "Atendem clientes fora do Brasil?",
+    "a": "Sim. Trabalho remoto, reuniões no seu fuso e entregas em português ou inglês."
+  }
+]

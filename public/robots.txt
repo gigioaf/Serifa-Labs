@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Host must match `site` in astro.config.mjs.
+# @astrojs/sitemap emits /sitemap-index.xml on build.
+Sitemap: https://serifalabs.com/sitemap-index.xml

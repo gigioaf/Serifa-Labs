@@ -1,0 +1,28 @@
+---
+// Sumário da página — "line sidebar" (porte vanilla do React Bits Line Sidebar).
+// Navegação de seções fixa à direita: cada item é uma linha que cresce e revela
+// o rótulo no hover/foco; a linha da seção atual fica destacada em bronze.
+//
+// É CSS puro + estado ativo — sem React. O `.on` (mostrar/esconder no herói) e a
+// classe `.active` são controlados pelo IntersectionObserver do fólio em
+// effects-base.ts, então sumário e fólio ficam sempre em sincronia. Os `data-n`
+// abaixo espelham a numeração editorial do fólio (01 Manifesto → 06 Contato).
+const items = [
+  { n: '01', label: 'Manifesto', href: '#manifesto' },
+  { n: '02', label: 'Serviços', href: '#servicos' },
+  { n: '03', label: 'Trabalho', href: '#trabalho' },
+  { n: '04', label: 'Processo', href: '#processo' },
+  { n: '05', label: 'Perguntas', href: '#faq' },
+  { n: '06', label: 'Contato', href: '#contato' },
+];
+---
+<nav class="toc" aria-label="Sumário da página">
+  {
+    items.map((it) => (
+      <a class="toc-link" href={it.href} data-n={it.n}>
+        <span class="toc-label">{it.label}</span>
+        <span class="toc-line" aria-hidden="true" />
+      </a>
+    ))
+  }
+</nav>

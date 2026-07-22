@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import Preloader from '../components/Preloader.astro';
+import Grain from '../components/Grain.astro';
+import Folio from '../components/Folio.astro';
+import Toc from '../components/Toc.astro';
+import Cursor from '../components/Cursor.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Manifesto from '../components/Manifesto.astro';
+import Stats from '../components/Stats.astro';
+import Services from '../components/Services.astro';
+import Work from '../components/Work.astro';
+import Quote from '../components/Quote.astro';
+import Process from '../components/Process.astro';
+import Faq from '../components/Faq.astro';
+import Palette from '../components/Palette.astro';
+import TypeSpecimen from '../components/TypeSpecimen.astro';
+import Closing from '../components/Closing.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base>
+  {/* Fixed overlays */}
+  <Preloader />
+  <Grain />
+  <Folio />
+  <Toc />
+  <Cursor />
+
+  {/* Banner */}
+  <Nav />
+
+  <main>
+    <Hero />
+    <Manifesto />
+    <Stats />
+    <Services />
+    <Work />
+    {/* ⚠ Quote is a FABRICATED testimonial — remove this line before publishing
+        unless you have a real, attributable quote. See src/components/Quote.astro. */}
+    <Quote />
+    <Process />
+    <Faq />
+    <Palette />
+    <TypeSpecimen />
+    <Closing />
+  </main>
+
+  <Footer />
+
+  <script>
+    // Effects island loader.
+    //   • effects-base  → runs immediately, no GSAP (preloader safety-net, nav,
+    //     3D stack, cursor, folio, FAQ). This is the "client:load" layer.
+    //   • effects-gsap  → dynamically imported ONLY when motion is allowed, so
+    //     reduced-motion visitors download zero animation JS. This is the
+    //     lazy/"client:visible"-equivalent motion layer.
+    import '../scripts/effects-base';
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      import('../scripts/effects-gsap');
+    }
+  </script>
+</Base>

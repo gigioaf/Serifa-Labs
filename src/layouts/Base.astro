@@ -1,0 +1,123 @@
+---
+/**
+ * Base.astro — document shell: head, SEO, JSON-LD, self-hosted fonts, tokens.
+ *
+ * Fonts are self-hosted via @fontsource (subset by unicode-range, font-display
+ * swap) so there is no render-blocking third-party request — the browser only
+ * fetches the latin / latin-ext cuts it actually needs for pt-BR.
+ */
+import '@fontsource-variable/fraunces/opsz.css'; // títulos (optical sizing + wght)
+import '@fontsource-variable/fraunces/opsz-italic.css'; // ênfases em itálico
+import '@fontsource-variable/inter/wght.css'; // corpo (400/500/600)
+import '@fontsource/michroma/400.css'; // o "LAB" do lockup
+import '../styles/global.css';
+import studio from '../data/studio.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = `${studio.name} — Estúdio de design e código`,
+  description = studio.description,
+  path = '/',
+  ogImage = '/og-image.png',
+  noindex = false,
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://serifalabs.com');
+const canonical = new URL(path, site).href;
+const ogImageUrl = new URL(ogImage, site).href;
+
+// JSON-LD: schema.org Organization + ProfessionalService, driven by studio.json.
+const sameAs = studio.social.filter((s) => s.url && s.url !== '#').map((s) => s.url);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${site.origin}/#organization`,
+      name: studio.name,
+      alternateName: studio.tagline,
+      url: `${site.origin}/`,
+      logo: new URL('/logo-serifa.png', site).href,
+      image: ogImageUrl,
+      email: studio.email,
+      foundingDate: studio.founded,
+      ...(sameAs.length ? { sameAs } : {}),
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: studio.address.city,
+        addressRegion: studio.address.region,
+        addressCountry: studio.address.countryCode,
+      },
+    },
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${site.origin}/#service`,
+      name: studio.name,
+      url: `${site.origin}/`,
+      image: ogImageUrl,
+      email: studio.email,
+      description: studio.description,
+      priceRange: '$$',
+      areaServed: { '@type': 'Country', name: studio.address.country },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: studio.address.city,
+        addressRegion: studio.address.region,
+        addressCountry: studio.address.countryCode,
+      },
+      parentOrganization: { '@id': `${site.origin}/#organization` },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#0A0A0F" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* favicon — o "S" do logo */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={studio.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${studio.name} — ${studio.tagline}`} />
+    <meta property="og:locale" content="pt_BR" />
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <slot name="head" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

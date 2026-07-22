@@ -1,0 +1,39 @@
+---
+// Hero. `.reveal` elements open on load, line by line (effects-gsap.ts hero
+// timeline, which waits on the preloader).
+//
+// `.aurora` = animated WebGL2 background, scoped to this section (clipped by the
+// hero's overflow:hidden, paused when scrolled out). See scripts/aurora.ts.
+// <Seal /> = the rotating "circular text" watermark (.seal) that replaced the
+// old vertical "SERIFA" spine; it still gets the light scroll/mouse parallax.
+import Seal from './Seal.astro';
+---
+<header class="hero" id="top">
+  <canvas class="aurora" aria-hidden="true"></canvas>
+  <Seal />
+  <div class="wrap">
+    <div class="eyebrow reveal">Estúdio de design e código — desde 2025</div>
+    <h1 class="serif">
+      <span class="reveal">A forma</span>
+      <span class="l2 reveal"><em>importa.</em></span>
+    </h1>
+    <p class="sub reveal">Criamos identidades e sites para marcas que tratam cada detalhe como parte da mensagem. Design com serifa, código com precisão.</p>
+    <div class="hero-cta reveal">
+      <a class="btn-primary specular" href="#contato">Começar um projeto</a>
+      <a class="btn-ghost" href="#trabalho">Ver o trabalho</a>
+    </div>
+  </div>
+  <div class="scroll-cue"><span class="chev"></span>Role</div>
+</header>
+
+<script>
+  // Aurora background island — gated on motion, lazily imported so
+  // reduced-motion visitors never download the WebGL module.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canvas = document.querySelector('.hero .aurora') as HTMLCanvasElement | null;
+  if (canvas && !reduce) {
+    import('../scripts/aurora')
+      .then((m) => m.initAurora(canvas))
+      .catch(() => {});
+  }
+</script>

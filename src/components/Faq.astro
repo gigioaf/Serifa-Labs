@@ -1,0 +1,32 @@
+---
+// FAQ accordion (data/faq.json). Toggling and aria-expanded are handled in
+// effects-base.ts. Each question/answer is wired with aria-controls /
+// aria-labelledby for screen-reader support.
+import faq from '../data/faq.json';
+---
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="eyebrow reveal">Perguntas frequentes</div>
+    <h2 class="serif reveal">Antes de começar, o básico.</h2>
+    <div class="faq-list reveal">
+      {
+        faq.map((item, i) => (
+          <div class="faq-item">
+            <button
+              class="faq-q"
+              type="button"
+              id={`faq-q-${i}`}
+              aria-expanded="false"
+              aria-controls={`faq-a-${i}`}
+            >
+              {item.q}<span class="ic" aria-hidden="true" />
+            </button>
+            <div class="faq-a" id={`faq-a-${i}`} role="region" aria-labelledby={`faq-q-${i}`}>
+              <p>{item.a}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

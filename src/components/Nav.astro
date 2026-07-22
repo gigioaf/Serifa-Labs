@@ -1,0 +1,25 @@
+---
+// Fixed nav that solidifies on scroll (see effects-base.ts → nav.solid).
+// Lockup = [logo mask] + "LAB" in Michroma. The anchor carries the aria-label
+// because the logo is a CSS mask image (no intrinsic text).
+//
+// `base` prefixes the anchor targets so the same nav works on subpages: on the
+// homepage it stays '' (in-page anchors like #trabalho); on a case page it is
+// '/' so the links jump back to the homepage sections (/#trabalho) and the logo
+// returns home.
+interface Props {
+  base?: string;
+}
+const { base = '' } = Astro.props;
+---
+<nav id="nav">
+  <a class="word" href={base || '#top'} aria-label="Serifa Lab — início">
+    <span class="brand-icon" aria-hidden="true"><i class="bub b1"></i><i class="bub b2"></i><i class="bub b3"></i></span><span class="logo-mark" aria-hidden="true"></span><span class="lab">LAB</span>
+  </a>
+  <div class="nav-links">
+    <a class="txt" href={`${base}#servicos`}>Serviços</a>
+    <a class="txt" href={`${base}#trabalho`}>Trabalho</a>
+    <a class="txt" href={`${base}#processo`}>Processo</a>
+    <a class="pill specular" href={`${base}#contato`}>Começar projeto</a>
+  </div>
+</nav>

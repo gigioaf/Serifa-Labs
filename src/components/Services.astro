@@ -1,0 +1,30 @@
+---
+// Services — the 4 sticky panels (data/services.json). effects-base.ts drives
+// the 3D stack (translateZ + rotateX + scale) as you scroll; the face colours
+// arc rock → akaroa → barley → shaft. The empty <i> is the little square bullet.
+import services from '../data/services.json';
+---
+<section class="stack features" id="servicos">
+  {
+    services.map((s) => (
+      <div class="panel-sticky">
+        <div class="panel">
+          <div class:list={['face', s.face]}>
+            <div class="top">
+              <h3 class="serif">{s.title}</h3>
+              <div class="num">{s.num}</div>
+            </div>
+            <div class="body">
+              {s.cells.map((c) => (
+                <div class="cell">
+                  <div class="lab"><i />{c.lab}</div>
+                  <p>{c.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</section>

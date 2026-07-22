@@ -1,0 +1,44 @@
+---
+// Closing CTA. The mailto stays the primary contact CTA. The .amp2 holds a faint
+// typographic watermark — rows of "SERIFA LAB" tiled behind the copy (still gets
+// the light scroll parallax from effects-gsap). A Netlify Forms alternative is
+// included, commented out — enable it if you'd rather collect messages than open
+// a mail client.
+import studio from '../data/studio.json';
+
+// Marca d'água: fileiras de "SERIFA LAB" repetido, bem clarinho (opacidade baixa
+// no CSS). Cada linha repete a frase o bastante para transbordar a largura;
+// linhas pares deslocam um pouco para não formar colunas visíveis.
+const wmRows = 11;
+const wmLine = 'SERIFA LAB · '.repeat(14);
+---
+<section class="closing-cta" id="contato">
+  <div class="amp2" aria-hidden="true">
+    {Array.from({ length: wmRows }, () => <span class="wm-row">{wmLine}</span>)}
+  </div>
+  <div class="wrap inner">
+    <div class="eyebrow reveal">Vamos conversar</div>
+    <h2 class="serif reveal">Vamos dar forma à sua <em>próxima ideia</em>.</h2>
+    <a class="mail reveal" href={`mailto:${studio.email}`}>{studio.email}</a>
+
+    {/* ------------------------------------------------------------------
+        ALTERNATIVA — formulário via Netlify Forms (o mailto acima continua
+        sendo o CTA principal). Para ativar:
+          1. descomente o <form> abaixo;
+          2. src/pages/obrigado.astro já existe (página de sucesso);
+          3. o honeypot "bot-field" barra bots sem CAPTCHA;
+          4. (opcional) ajuste headers/redirects em netlify.toml.
+        Netlify detecta o form no HTML estático do build automaticamente.
+
+    <form name="contato" method="POST" data-netlify="true"
+          netlify-honeypot="bot-field" action="/obrigado">
+      <input type="hidden" name="form-name" value="contato" />
+      <p hidden><label>Deixe em branco: <input name="bot-field" /></label></p>
+      <p><label>Nome <input type="text" name="nome" required /></label></p>
+      <p><label>E-mail <input type="email" name="email" required /></label></p>
+      <p><label>Mensagem <textarea name="mensagem" rows="4" required></textarea></label></p>
+      <p><button type="submit" class="btn-primary">Enviar</button></p>
+    </form>
+    ------------------------------------------------------------------ */}
+  </div>
+</section>

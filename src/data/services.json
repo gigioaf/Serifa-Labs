@@ -1,0 +1,42 @@
+[
+  {
+    "face": "f-rock",
+    "num": "01",
+    "title": "Web Design e Desenvolvimento",
+    "cells": [
+      { "lab": "Sob medida", "text": "Sites desenhados do zero para a sua marca — nada de template genérico." },
+      { "lab": "Rápido e responsivo", "text": "Código enxuto, leve em qualquer tela e feito para converter." },
+      { "lab": "Movimento com propósito", "text": "Animações que guiam o olhar, sem excesso." }
+    ]
+  },
+  {
+    "face": "f-akaroa",
+    "num": "02",
+    "title": "Identidade e Branding",
+    "cells": [
+      { "lab": "Marca com voz", "text": "Logotipo, sistema visual e a personalidade que sustenta tudo." },
+      { "lab": "Diretrizes claras", "text": "Um guia que mantém a marca afiada em todo ponto de contato." },
+      { "lab": "Aplicações reais", "text": "Do cartão ao site, coerência do começo ao fim." }
+    ]
+  },
+  {
+    "face": "f-barley",
+    "num": "03",
+    "title": "Tipografia e Design System",
+    "cells": [
+      { "lab": "Nossa especialidade", "text": "Sistemas tipográficos e de componentes que escalam sem perder a alma." },
+      { "lab": "Tokens e consistência", "text": "Cores, escalas e espaçamentos documentados para a sua equipe." },
+      { "lab": "Pareamento de fontes", "text": "A escolha certa de tipos — onde caráter encontra legibilidade." }
+    ]
+  },
+  {
+    "face": "f-shaft",
+    "num": "04",
+    "title": "SEO e Performance",
+    "cells": [
+      { "lab": "Encontrável", "text": "As pessoas certas te acham — sem pagar por cada clique." },
+      { "lab": "Veloz", "text": "Otimização de carregamento e núcleos de web vitals no verde." },
+      { "lab": "Duradouro", "text": "Estrutura e conteúdo que rendem muito depois do lançamento." }
+    ]
+  }
+]

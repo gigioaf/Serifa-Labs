@@ -1,0 +1,328 @@
+---
+/**
+ * Case / project presentation page — one reusable template for every project.
+ *
+ * Driven by src/data/cases.json (getStaticPaths below builds one page per
+ * entry: /trabalho/brasa/, /trabalho/volt/, /trabalho/marfim/). This replaces
+ * the old stand-alone demo landing pages under public/trabalho/*, so every
+ * project now opens INSIDE the Serifa site — same nav, footer, type and tokens
+ * — instead of jumping the visitor to a separate site.
+ *
+ * Flow (Averlo-style): hero (title + lede + meta) → cover in a browser frame →
+ * overview + result + details/scope → pull-quote → stacked gallery → "quer ver
+ * mais" grid → full-bleed "próximo projeto" band. All motion reuses the site's
+ * `.reveal` system (scripts/effects-*).
+ */
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import Grain from '../../components/Grain.astro';
+import Cursor from '../../components/Cursor.astro';
+import cases from '../../data/cases.json';
+
+export function getStaticPaths() {
+  return cases.map((c, i) => ({
+    params: { slug: c.slug },
+    props: {
+      c,
+      // the other projects, in order: others[0] is the immediate "next"
+      others: [...cases.slice(i + 1), ...cases.slice(0, i)].slice(0, 2),
+    },
+  }));
+}
+
+const { c, others } = Astro.props;
+const next = others[0];
+
+// Absolute URLs for social + structured data.
+const site = Astro.site ?? new URL('https://serifalabs.com');
+const caseUrl = new URL(`/trabalho/${c.slug}/`, site).href;
+const ogUrl = new URL(c.ogImage ?? c.cover, site).href;
+
+// JSON-LD: CreativeWork (this project) + BreadcrumbList (Home › Trabalho › Projeto).
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CreativeWork',
+      '@id': `${caseUrl}#work`,
+      name: c.name,
+      headline: c.headline.join(' ').replace(/<[^>]+>/g, ''),
+      description: c.lede,
+      url: caseUrl,
+      image: ogUrl,
+      inLanguage: 'pt-BR',
+      dateCreated: String(c.year),
+      keywords: c.scope.join(', '),
+      about: c.sector,
+      creator: { '@type': 'Organization', name: 'Serifa Lab', url: `${site.origin}/` },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Serifa Lab', item: `${site.origin}/` },
+        { '@type': 'ListItem', position: 2, name: 'Trabalho', item: `${site.origin}/#trabalho` },
+        { '@type': 'ListItem', position: 3, name: c.name, item: caseUrl },
+      ],
+    },
+  ],
+};
+
+// Sumário lateral (line sidebar) — mesmas seções deste case. A galeria só entra
+// quando existe. Os alvos (data-target) casam com os id das <section> abaixo.
+const tocItems = [
+  { n: '01', label: 'Visão geral', target: 'visao' },
+  ...(c.gallery.length ? [{ n: '02', label: 'Galeria', target: 'galeria' }] : []),
+  { n: c.gallery.length ? '03' : '02', label: 'Mais projetos', target: 'mais' },
+];
+---
+
+<Base
+  title={`${c.name} — Serifa Lab`}
+  description={c.lede}
+  path={`/trabalho/${c.slug}/`}
+  ogImage={c.ogImage ?? c.cover}
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+
+  <Grain />
+  <Cursor />
+  <Nav base="/" />
+
+  {/* Sumário lateral — igual ao da home (line sidebar à direita, ≥1024px) */}
+  <nav class="toc case-toc" aria-label="Sumário do case">
+    {tocItems.map((it) => (
+      <a class="toc-link" href={`#${it.target}`} data-target={it.target} data-n={it.n}>
+        <span class="toc-label">{it.label}</span>
+        <span class="toc-line" aria-hidden="true" />
+      </a>
+    ))}
+  </nav>
+
+  <main class="case">
+    {/* ---------------------------------------------------------------- HERO */}
+    <header class="case-hero">
+      <div class="wrap">
+        <nav class="case-crumbs" aria-label="Trilha de navegação">
+          <a href="/">Serifa Lab</a><span class="sep" aria-hidden="true">/</span><a href="/#trabalho">Trabalho</a><span class="sep" aria-hidden="true">/</span><span class="current" aria-current="page">{c.name}</span>
+        </nav>
+        <div class="eyebrow case-eyebrow">{c.sector}</div>
+        <h1 class="serif case-title">
+          {c.headline.map((line) => <span class="case-line" set:html={line} />)}
+        </h1>
+        <p class="case-lede">{c.lede}</p>
+        <div class="case-facts">
+          <span>{c.tags}</span>
+          <span class="dot">·</span>
+          <span>{c.year}</span>
+        </div>
+      </div>
+      <div class="wrap">
+        <figure class="case-cover">
+          <div class="browser-frame">
+            <div class="bf-bar" aria-hidden="true">
+              <span class="bf-dots"><i></i><i></i><i></i></span>
+              <span class="bf-url">{c.site}</span>
+            </div>
+            <img
+              src={c.cover}
+              alt={`${c.name} — capa do projeto`}
+              width={c.coverW}
+              height={c.coverH}
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+        </figure>
+      </div>
+    </header>
+
+    {/* ------------------------------------------------- OVERVIEW + DETAILS */}
+    <section class="case-overview" id="visao">
+      <div class="wrap case-overview-grid">
+        <div class="case-story reveal">
+          <div class="eyebrow">Sobre o projeto</div>
+          {c.overview.map((p) => <p>{p}</p>)}
+          {c.results && (
+            <div class="case-result">
+              <h4>Resultado</h4>
+              <p>{c.results}</p>
+            </div>
+          )}
+        </div>
+        <aside class="case-details reveal">
+          <dl class="case-meta">
+            {c.meta.map(([k, v]) => (
+              <div class="case-meta-row">
+                <dt>{k}</dt>
+                <dd>{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <div class="case-scope">
+            <h4>Escopo</h4>
+            <ul>
+              {c.scope.map((s, i) => (
+                <li><span class="sc-n">{String(i + 1).padStart(2, '0')}</span>{s}</li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    {/* ----------------------------------------------------------- PULLQUOTE */}
+    {c.pullquote && (
+      <section class="case-pullquote">
+        <div class="wrap">
+          <blockquote class="serif reveal" set:html={c.pullquote} />
+        </div>
+      </section>
+    )}
+
+    {/* ------------------------------------------------------------- GALLERY */}
+    {c.gallery.length > 0 && (
+      <section class="case-gallery" id="galeria">
+        <div class="wrap">
+          {c.gallery.map((g) => (
+            <figure class="case-shot reveal">
+              <img src={g.src} alt={g.caption} width={g.w} height={g.h} loading="lazy" />
+              {g.caption && <figcaption>{g.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {c.status === 'soon' && (
+      <section class="case-soon">
+        <div class="wrap">
+          <p class="reveal"><span class="soon-tag">Em breve</span> A galeria completa deste case está sendo finalizada.</p>
+        </div>
+      </section>
+    )}
+
+    {/* -------------------------------------------------------- QUER VER MAIS */}
+    <section class="case-next" id="mais">
+      <div class="wrap">
+        <div class="case-next-head reveal">
+          <h2 class="serif">Quer ver mais?</h2>
+          <a class="btn-ghost" href="/#trabalho">Todo o trabalho</a>
+        </div>
+        <div class="case-next-grid">
+          {others.map((o) => (
+            <a class="pcard reveal" href={`/trabalho/${o.slug}/`} aria-label={`Ver projeto: ${o.name}`}>
+              <div class:list={['ph', `pv-${o.art}`]}>
+                <span class="pv-name">{o.display}</span>
+              </div>
+              <div class="cap">
+                <div>
+                  <div class="tag">{o.tags}</div>
+                  <h3>{o.name}</h3>
+                </div>
+                <span class="yr">’{String(o.year).slice(-2)}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ----------------------------------------------------- PRÓXIMO PROJETO */}
+    {next && (
+      <a
+        class="case-nextproject"
+        href={`/trabalho/${next.slug}/`}
+        aria-label={`Próximo projeto: ${next.name}`}
+      >
+        <div class="np-bg" style={`background-image:url(${next.cover})`} aria-hidden="true"></div>
+        <div class="wrap np-inner">
+          <span class="np-label">Próximo projeto</span>
+          <span class="np-name serif">{next.display}</span>
+          <span class="np-cta">Ver o case <span class="arw">→</span></span>
+        </div>
+      </a>
+    )}
+
+    {/* -------------------------------------------------------------- LIGHTBOX */}
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Imagem ampliada" hidden>
+      <button class="lb-close" id="lb-close" type="button" aria-label="Fechar">×</button>
+      <img id="lb-img" src="" alt="" />
+    </div>
+  </main>
+
+  <Footer />
+
+  <script>
+    // Same effects island as the homepage: nav solidify, custom cursor, tilted
+    // "quer ver mais" cards and the `.reveal` scroll animations. GSAP is only
+    // imported when motion is allowed (reduced-motion visitors get the static,
+    // fully-visible fallback).
+    import '../../scripts/effects-base';
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      import('../../scripts/effects-gsap');
+    }
+  </script>
+
+  <script>
+    // Lightbox da galeria — clicar numa imagem abre ampliada; fecha no clique
+    // fora / no botão / com ESC. Vanilla, sem biblioteca.
+    (() => {
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lb-img') as HTMLImageElement | null;
+      const closeBtn = document.getElementById('lb-close');
+      if (!lb || !lbImg) return;
+      const open = (src: string, alt: string) => {
+        lbImg.src = src;
+        lbImg.alt = alt;
+        lb.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+      };
+      const close = () => {
+        lb.setAttribute('hidden', '');
+        lbImg.src = '';
+        document.body.style.overflow = '';
+      };
+      document.querySelectorAll<HTMLImageElement>('.case-shot img').forEach((img) => {
+        img.style.cursor = 'zoom-in';
+        img.addEventListener('click', () => open(img.currentSrc || img.src, img.alt));
+      });
+      lb.addEventListener('click', (e) => {
+        if (e.target === lb || e.target === closeBtn) close();
+      });
+      addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !lb.hasAttribute('hidden')) close();
+      });
+    })();
+  </script>
+
+  <script>
+    // Sumário lateral do case — aparece depois do herói e destaca a seção atual
+    // (mesmo comportamento do sumário da home, mas com as seções deste case).
+    (() => {
+      const toc = document.querySelector('.case-toc');
+      if (!toc) return;
+      const links = [...toc.querySelectorAll<HTMLElement>('.toc-link')];
+      const hero = document.querySelector('.case-hero');
+      const setActive = (id: string) =>
+        links.forEach((l) => l.classList.toggle('active', l.dataset.target === id));
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((en) => {
+            if (en.target === hero) {
+              toc.classList.toggle('on', !en.isIntersecting);
+              return;
+            }
+            if (en.isIntersecting) setActive((en.target as HTMLElement).id);
+          });
+        },
+        { rootMargin: '-45% 0px -45% 0px' }
+      );
+      if (hero) io.observe(hero);
+      links.forEach((l) => {
+        const el = l.dataset.target && document.getElementById(l.dataset.target);
+        if (el) io.observe(el);
+      });
+    })();
+  </script>
+</Base>

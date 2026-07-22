@@ -1,0 +1,39 @@
+---
+// Página 404 — erro amigável no estilo Serifa (nav + rodapé do site). noindex.
+// Sem classes .reveal: a página não rola, então o conteúdo tem de aparecer já
+// (os reveals são presos ao scroll — ver scripts/effects-gsap).
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Grain from '../components/Grain.astro';
+import Cursor from '../components/Cursor.astro';
+---
+<Base
+  title="Página não encontrada — Serifa Lab"
+  description="A página que você procura não existe ou foi movida."
+  path="/404"
+  noindex={true}
+>
+  <Grain />
+  <Cursor />
+  <Nav base="/" />
+
+  <main class="notfound">
+    <div class="wrap nf-inner">
+      <div class="nf-code" aria-hidden="true">404</div>
+      <div class="eyebrow">Página não encontrada</div>
+      <h1 class="serif nf-title">Esta página saiu de <em>cena</em>.</h1>
+      <p class="nf-lede">O link pode estar quebrado ou a página foi movida. Vamos te levar de volta pro que importa.</p>
+      <div class="nf-cta">
+        <a class="btn-primary specular" href="/">Voltar ao início</a>
+        <a class="btn-ghost" href="/#trabalho">Ver o trabalho</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script>
+    import '../scripts/effects-base';
+  </script>
+</Base>

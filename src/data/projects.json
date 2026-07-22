@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Brasa",
+    "display": "BRASA",
+    "tags": "Identidade · Web",
+    "year": "’25",
+    "route": "/trabalho/brasa/",
+    "art": "brasa"
+  },
+  {
+    "name": "Volt",
+    "display": "VOLT",
+    "tags": "Web · Design System",
+    "year": "’25",
+    "route": "/trabalho/volt/",
+    "art": "volt"
+  },
+  {
+    "name": "Marfim",
+    "display": "MARFIM",
+    "tags": "Identidade · Web",
+    "year": "’25",
+    "route": "/trabalho/marfim/",
+    "art": "marfim"
+  }
+]

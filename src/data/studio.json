@@ -1,0 +1,23 @@
+{
+  "name": "Serifa Lab",
+  "tagline": "Estúdio de design e código",
+  "description": "Criamos identidades e sites para marcas que tratam cada detalhe como parte da mensagem. Design com serifa, código com precisão.",
+  "email": "contato@serifalabs.com",
+  "founded": "2025",
+  "address": {
+    "city": "São Paulo",
+    "region": "SP",
+    "country": "Brasil",
+    "countryCode": "BR"
+  },
+  "social": [
+    { "label": "Instagram", "url": "https://www.instagram.com/serifalabs/" },
+    { "label": "WhatsApp", "url": "https://wa.me/5513991059755" }
+  ],
+  "stats": [
+    { "n": "3", "l": "Projetos entregues em 2025" },
+    { "n": "4", "l": "Especialidades sob o mesmo teto" },
+    { "n": "100", "em": "%", "l": "Sob medida — nenhum template" },
+    { "n": "2025", "l": "Ano em que o estúdio nasceu" }
+  ]
+}

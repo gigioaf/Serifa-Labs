@@ -1,0 +1,71 @@
+# Build + deploy do Serifa Lab na Hostinger.
+#
+# Por que existe: o Git nativo da Hostinger só faz clone/pull do repositório —
+# ele NÃO roda build. Como o que vai para o ar é o dist/ gerado pelo Astro (e
+# não o src/), o build acontece aqui, no GitHub, e só o resultado sobe por FTP.
+# Assim o dist/ continua fora do repositório (veja .gitignore).
+#
+# Secrets necessários (Settings → Secrets and variables → Actions):
+#   FTP_SERVER    host FTP da Hostinger — ex.: ftp.serifalabs.com
+#   FTP_USERNAME  usuário FTP (hPanel → Arquivos → Contas FTP)
+#   FTP_PASSWORD  senha dessa conta FTP
+# Nunca coloque esses valores neste arquivo: ele é versionado.
+
+name: Deploy para a Hostinger
+
+on:
+  push:
+    branches: [main]
+  # Permite disparar o deploy à mão pela aba Actions, sem precisar commitar.
+  workflow_dispatch:
+
+# Se dois pushes acontecerem em sequência, cancela o deploy anterior — evita
+# que uma build antiga sobrescreva uma mais nova por causa da ordem de chegada.
+concurrency:
+  group: deploy-producao
+  cancel-in-progress: true
+
+jobs:
+  build-e-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Preparar o Node
+        uses: actions/setup-node@v4
+        with:
+          # Lê o .nvmrc do projeto (22), então a versão fica num lugar só.
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependências
+        # `npm ci` respeita o package-lock.json à risca — build reproduzível.
+        run: npm ci
+
+      - name: Build do site
+        run: npm run build
+
+      - name: Conferir se o .htaccess entrou no build
+        # O .htaccess vem de public/ e carrega cache, 404 e redirects. Se algum
+        # dia sumir, o deploy passa despercebido e o site degrada em silêncio —
+        # melhor falhar aqui.
+        run: test -f dist/.htaccess
+
+      - name: Enviar o dist/ para o public_html
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # A barra final importa: sem ela o conteúdo vai para o lugar errado.
+          local-dir: ./dist/
+          server-dir: /public_html/
+          # Arquivos que existem no servidor mas não no dist/ e devem sobreviver
+          # ao sync (a action apaga o que não reconhece).
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.well-known/**

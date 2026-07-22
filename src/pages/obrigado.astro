@@ -1,0 +1,28 @@
+---
+// Success page for the (optional) Netlify contact form. Only reachable if you
+// enable the <form> in Closing.astro. Kept noindex — it's a thank-you page.
+import Base from '../layouts/Base.astro';
+---
+<Base
+  title="Obrigado — Serifa Lab"
+  description="Recebemos a sua mensagem."
+  path="/obrigado/"
+  noindex={true}
+>
+  <main class="thanks">
+    <div class="wrap">
+      <div class="eyebrow">Contato</div>
+      <h1 class="serif">Recebemos a sua <em>mensagem</em>.</h1>
+      <p>Obrigado por escrever para o Serifa Lab. Respondemos em até um dia útil.</p>
+      <a class="btn-primary" href="/">Voltar ao início</a>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .thanks { min-height: 100svh; display: flex; align-items: center; padding: 120px 0; }
+  .thanks .eyebrow { margin-bottom: 18px; }
+  .thanks h1 { font-size: clamp(38px, 7vw, 84px); font-weight: 400; color: var(--rock); max-width: 14ch; }
+  .thanks h1 em { color: var(--barley-l); font-style: italic; }
+  .thanks p { margin: 24px 0 34px; font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 44ch; }
+</style>

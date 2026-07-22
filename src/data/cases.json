@@ -1,0 +1,230 @@
+[
+  {
+    "slug": "brasa",
+    "name": "Brasa",
+    "display": "BRASA",
+    "art": "brasa",
+    "tags": "Identidade · Web",
+    "year": "2025",
+    "sector": "Gastronomia · Bistrô de brasa",
+    "headline": [
+      "Calor de brasa,",
+      "em forma de <em>marca</em>."
+    ],
+    "lede": "Identidade e site para um bistrô onde tudo começa no fogo — do logotipo à última dobra da página.",
+    "status": "live",
+    "cover": "/cases/brasa/cover.webp",
+    "overview": [
+      "A Brasa nasceu de uma ideia simples: um bistrô onde a chama viva é o centro de tudo. O desafio era traduzir esse calor em uma marca que funcionasse tão bem no letreiro da fachada quanto na tela do celular na hora de reservar.",
+      "Construímos um sistema em torno de poucos elementos fortes — a serifa quente do logotipo, o vermelho de brasa e um símbolo de faísca que se repete como assinatura. O site foi desenhado como um menu editorial: hierarquia clara, espaço para respirar e o prato da casa em destaque."
+    ],
+    "meta": [
+      [
+        "Cliente",
+        "Brasa"
+      ],
+      [
+        "Ano",
+        "2025"
+      ],
+      [
+        "Setor",
+        "Restaurante"
+      ],
+      [
+        "Entrega",
+        "Identidade + Site"
+      ]
+    ],
+    "scope": [
+      "Identidade visual",
+      "Direção de arte",
+      "Web design",
+      "Desenvolvimento front-end"
+    ],
+    "gallery": [
+      {
+        "src": "/cases/brasa/01.webp",
+        "caption": "O cardápio tratado como página editorial — tipografia com serifa e ritmo de leitura.",
+        "w": 1700,
+        "h": 1427
+      },
+      {
+        "src": "/cases/brasa/02.webp",
+        "caption": "O prato da casa em destaque, com espaço para a imagem respirar.",
+        "w": 1700,
+        "h": 705
+      },
+      {
+        "src": "/cases/brasa/03.webp",
+        "caption": "Galeria de ambiente e informações de visita reunidas em um bloco só.",
+        "w": 1700,
+        "h": 1108
+      },
+      {
+        "src": "/cases/brasa/04.webp",
+        "caption": "Fechamento em vermelho de brasa, com a chamada para reservar.",
+        "w": 1700,
+        "h": 838
+      }
+    ],
+    "site": "brasa.com.br",
+    "pullquote": "O fogo virou sistema — uma faísca, um vermelho de brasa e uma serifa quente assinam cada tela.",
+    "results": "O resultado é uma marca que funciona igual no letreiro da fachada e na tela do celular: reconhecível, quente e fácil de manter. O site conduz da fome à reserva sem ruído.",
+    "coverW": 2000,
+    "coverH": 1250,
+    "ogImage": "/cases/brasa/og.jpg"
+  },
+  {
+    "slug": "volt",
+    "name": "Volt",
+    "display": "VOLT",
+    "art": "volt",
+    "tags": "Web · Design System",
+    "year": "2025",
+    "sector": "SaaS · Dados em tempo real",
+    "headline": [
+      "Dados na velocidade",
+      "do <em>agora</em>."
+    ],
+    "lede": "Marca e site para uma plataforma de dados em tempo real — técnica, veloz e sem gambiarra.",
+    "status": "live",
+    "cover": "/cases/volt/cover.webp",
+    "overview": [
+      "A Volt precisava parecer tão rápida quanto o produto que vende. Partimos de um design system enxuto: uma tipografia geométrica, o contraste do lima elétrico sobre o preto e uma grade que organiza informação densa sem cansar.",
+      "A página conta a história em camadas — do streaming de eventos aos números que sustentam a proposta, até os três passos de uso. Cada seção reaproveita os mesmos componentes, o que mantém a marca coerente e o site fácil de evoluir."
+    ],
+    "meta": [
+      [
+        "Cliente",
+        "Volt"
+      ],
+      [
+        "Ano",
+        "2025"
+      ],
+      [
+        "Setor",
+        "Tecnologia"
+      ],
+      [
+        "Entrega",
+        "Web + Design System"
+      ]
+    ],
+    "scope": [
+      "Design system",
+      "Web design",
+      "Desenvolvimento front-end",
+      "Motion design"
+    ],
+    "gallery": [
+      {
+        "src": "/cases/volt/01.webp",
+        "caption": "Grade de recursos em bento — informação densa, hierarquia clara.",
+        "w": 1700,
+        "h": 869
+      },
+      {
+        "src": "/cases/volt/02.webp",
+        "caption": "Os números que sustentam a proposta, em bloco de destaque.",
+        "w": 1700,
+        "h": 150
+      },
+      {
+        "src": "/cases/volt/03.webp",
+        "caption": "Como funciona, resumido em três passos.",
+        "w": 1700,
+        "h": 581
+      },
+      {
+        "src": "/cases/volt/04.webp",
+        "caption": "Chamada final de conversão, no lima da marca.",
+        "w": 1700,
+        "h": 462
+      }
+    ],
+    "site": "volt.app",
+    "pullquote": "Um site que parece tão rápido quanto o produto que ele vende.",
+    "results": "Entregamos um design system enxuto que a equipe evolui sozinha — os mesmos componentes do herói ao rodapé, com o lima elétrico como assinatura da marca.",
+    "coverW": 2000,
+    "coverH": 1250,
+    "ogImage": "/cases/volt/og.jpg"
+  },
+  {
+    "slug": "marfim",
+    "name": "Marfim",
+    "display": "MARFIM",
+    "art": "marfim",
+    "tags": "Identidade · Web",
+    "year": "2025",
+    "sector": "Odontologia · Clínica",
+    "headline": [
+      "Cuidar do sorriso",
+      "pode ser <em>leve</em>."
+    ],
+    "lede": "Identidade e site para uma clínica de odontologia que quer tirar o medo do dentista — calma, clara e acolhedora.",
+    "status": "live",
+    "cover": "/cases/marfim/cover.webp",
+    "overview": [
+      "A Marfim queria o oposto do consultório frio: um lugar onde ir ao dentista fosse tranquilo. O desafio de marca era transmitir confiança e cuidado sem cair no clichê clínico — nada de azul gelado e sorrisos de banco de imagens.",
+      "Escolhemos uma paleta de marfim, verde-pinho e um coral acolhedor, com tipografia arredondada e muito espaço para respirar. O site guia o paciente do primeiro receio à consulta agendada: serviços claros, prova social real e uma primeira visita explicada passo a passo."
+    ],
+    "meta": [
+      [
+        "Cliente",
+        "Marfim Odontologia"
+      ],
+      [
+        "Ano",
+        "2025"
+      ],
+      [
+        "Setor",
+        "Odontologia"
+      ],
+      [
+        "Entrega",
+        "Identidade + Site"
+      ]
+    ],
+    "scope": [
+      "Identidade visual",
+      "Web design",
+      "Desenvolvimento front-end",
+      "Copywriting"
+    ],
+    "gallery": [
+      {
+        "src": "/cases/marfim/01.webp",
+        "caption": "Serviços organizados em cards claros, fáceis de escanear.",
+        "w": 1700,
+        "h": 1061
+      },
+      {
+        "src": "/cases/marfim/02.webp",
+        "caption": "O bloco \"por que a Marfim\", em verde-pinho, com os diferenciais da clínica.",
+        "w": 1700,
+        "h": 882
+      },
+      {
+        "src": "/cases/marfim/03.webp",
+        "caption": "A primeira visita explicada em três passos, sem mistério.",
+        "w": 1700,
+        "h": 735
+      },
+      {
+        "src": "/cases/marfim/04.webp",
+        "caption": "Chamada final acolhedora, no coral da marca.",
+        "w": 1700,
+        "h": 660
+      }
+    ],
+    "site": "marfimodontologia.com.br",
+    "pullquote": "Ir ao dentista, enfim, com a guarda baixa.",
+    "results": "Uma presença calma e de confiança, longe do consultório frio. O site conduz o paciente do primeiro receio à consulta agendada, com prova social real e transparência de valores.",
+    "coverW": 2000,
+    "coverH": 1143,
+    "ogImage": "/cases/marfim/og.jpg"
+  }
+]

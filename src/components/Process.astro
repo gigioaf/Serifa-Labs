@@ -1,0 +1,27 @@
+---
+// Process — the bronze block. Five steps, kept inline (static editorial copy).
+const steps = [
+  { n: '01', t: 'Descoberta', d: 'Entendemos o negócio, o público e a única tarefa que a página precisa cumprir.' },
+  { n: '02', t: 'Estratégia', d: 'Definimos mensagem e hierarquia antes de desenhar — conteúdo é parte do design.' },
+  { n: '03', t: 'Design', d: 'Tokens primeiro: paleta, tipografia e o elemento assinatura pelo qual a marca será lembrada.' },
+  { n: '04', t: 'Build e Lançamento', d: 'Código limpo, testado em dispositivos reais, veloz e acessível.' },
+  { n: '05', t: 'Crescimento', d: 'Métricas, ajustes e SEO como um trabalho contínuo depois do ar.' },
+];
+---
+<section class="process" id="processo">
+  <div class="wrap">
+    <div class="eyebrow reveal">Como trabalhamos</div>
+    <h2 class="serif reveal">Cinco etapas, do primeiro traço à <em>última linha</em>.</h2>
+    <div class="steps">
+      {
+        steps.map((s) => (
+          <div class="step reveal">
+            <span class="n">{s.n}</span>
+            <span class="t serif">{s.t}</span>
+            <span class="d">{s.d}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
