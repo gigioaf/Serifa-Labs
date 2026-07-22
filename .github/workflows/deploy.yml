@@ -66,7 +66,12 @@ jobs:
           protocol: ftps
           # A barra final importa: sem ela o conteúdo vai para o lugar errado.
           local-dir: ./dist/
-          server-dir: /public_html/
+          # Caminho REAL do site, conforme a API da Hostinger (root_directory):
+          # /home/u693532294/domains/serifalabs.com/public_html
+          # A conta FTP principal entra em /home/u693532294, então o caminho
+          # relativo é este. Cuidado: existe também um /public_html na home que
+          # NÃO é servido — apontar para lá faz o deploy "passar" sem efeito.
+          server-dir: /domains/serifalabs.com/public_html/
           # Arquivos que existem no servidor mas não no dist/ e devem sobreviver
           # ao sync (a action apaga o que não reconhece).
           exclude: |
