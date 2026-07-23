@@ -8,6 +8,10 @@ import projects from '../data/projects.json';
 // ano de fundação, e alimenta o foundingDate do JSON-LD). Assim o rodapé se
 // atualiza sozinho a cada deploy em vez de envelhecer.
 const year = new Date().getFullYear();
+
+// O link "Cookies" (reabre o banner de consentimento) só faz sentido quando o
+// banner existe — mesma condição do ConsentBanner no Base.astro.
+const analyticsOn = Boolean(studio.analytics?.ga4) && import.meta.env.PROD;
 ---
 <footer>
   <div class="wrap">
@@ -19,9 +23,9 @@ const year = new Date().getFullYear();
       <div class="foot-cols">
         <div class="foot-col">
           <h4>Navegar</h4>
-          <a href="#servicos">Serviços</a>
-          <a href="#trabalho">Trabalho</a>
-          <a href="#processo">Processo</a>
+          <a href="/#servicos">Serviços</a>
+          <a href="/#trabalho">Trabalho</a>
+          <a href="/#processo">Processo</a>
         </div>
         <div class="foot-col">
           <h4>Trabalho</h4>
@@ -38,6 +42,15 @@ const year = new Date().getFullYear();
         </div>
       </div>
     </div>
-    <div class="foot-bottom"><span>© {year} {studio.name}. Todos os direitos reservados.</span><span>Oss</span></div>
+    <div class="foot-bottom">
+      <span>© {year} {studio.name}. Todos os direitos reservados.</span>
+      <span class="foot-legal">
+        <a href="/privacidade/">Privacidade</a>
+        {analyticsOn && (
+          <button type="button" class="foot-legal-btn" data-consent-reopen>Cookies</button>
+        )}
+        <span class="foot-oss">Oss</span>
+      </span>
+    </div>
   </div>
 </footer>

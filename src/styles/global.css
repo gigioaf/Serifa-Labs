@@ -131,7 +131,11 @@ i,.it{font-style:italic}
 .hero h1{font-size:clamp(38px,9vw,116px);font-weight:400;color:var(--rock)}
 .hero h1 .l2{display:block}
 .hero h1 em{color:var(--barley-l)}
-.hero .sub{margin-top:34px;max-width:520px;font-size:clamp(16px,2vw,19px);line-height:1.5;color:var(--muted)}
+/* Linha clara do herói — a proposta de valor. Sobe de --muted (.55) para .85 e
+   ganha um pouco de corpo, para ser lida de imediato em vez de recuar como
+   texto secundário. É a "linha que converte" logo abaixo do título. */
+.hero .sub{margin-top:34px;max-width:540px;font-size:clamp(16px,2vw,20px);line-height:1.55;
+  color:rgba(244,244,246,.85);font-weight:450}
 .hero-cta{margin-top:38px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 /* .btn-primary: fundo trocado de White Rock para Mine Shaft (a pedido). Como o
    herói também é escuro, ganha contorno + texto claro pra continuar visível;
@@ -339,6 +343,15 @@ footer{background:var(--shaft-dd);color:var(--rock);padding:70px 0 40px;border-t
 .foot-col a,.foot-col p{display:block;font-size:14px;color:rgba(244,244,246,.85);text-decoration:none;margin-bottom:9px}
 .foot-col a:hover{color:var(--barley-l)}
 .foot-bottom{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-top:26px;font-size:12px;color:var(--faint)}
+/* Linha legal do rodapé: Privacidade · Cookies · Oss */
+.foot-legal{display:inline-flex;align-items:center;gap:16px;flex-wrap:wrap}
+.foot-legal a,.foot-legal-btn{font-size:12px;color:var(--faint);text-decoration:none;
+  transition:color .25s var(--ease)}
+.foot-legal a:hover,.foot-legal-btn:hover{color:var(--barley-l)}
+/* botão "Cookies" parece um link, mas é <button> (dispara JS de reabertura) */
+.foot-legal-btn{background:none;border:0;padding:0;cursor:pointer;font-family:inherit;letter-spacing:inherit}
+.foot-legal-btn:focus-visible,.foot-legal a:focus-visible{outline:2px solid var(--barley-l);outline-offset:3px;border-radius:2px}
+.foot-oss{color:var(--faint)}
 
   /* PRELOADER */
 #preloader{position:fixed;inset:0;z-index:200;background:var(--shaft-dd);display:flex;align-items:center;justify-content:center}
@@ -361,6 +374,68 @@ html.cur-view #cur-dot{opacity:0}
 /* GRÃO */
 .grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.055;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* BOTÃO FLUTUANTE DE WHATSAPP (WhatsappFab.astro) — CTA de conversão. Círculo
+   verde com a marca; no hover/foco expande em pílula revelando "Fale conosco".
+   z-index:70 → acima da nav (50), abaixo dos overlays (grão 90, cursor 120,
+   preloader 200), então some naturalmente atrás do preloader no carregamento. */
+.wa-fab{position:fixed;right:clamp(16px,4vw,28px);bottom:clamp(16px,4vw,28px);z-index:70;
+  display:inline-flex;align-items:center;padding:14px;border-radius:999px;
+  background:#25D366;color:#fff;text-decoration:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.25);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+.wa-fab svg{flex:0 0 auto;width:28px;height:28px;display:block}
+.wa-fab-tip{white-space:nowrap;font-size:14px;font-weight:600;letter-spacing:.01em;
+  max-width:0;opacity:0;overflow:hidden;
+  transition:max-width .35s var(--ease),opacity .25s var(--ease),margin-left .35s var(--ease)}
+.wa-fab:hover,.wa-fab:focus-visible{transform:translateY(-2px);
+  box-shadow:0 12px 30px rgba(0,0,0,.4),0 3px 8px rgba(0,0,0,.3)}
+.wa-fab:hover .wa-fab-tip,.wa-fab:focus-visible .wa-fab-tip{max-width:220px;opacity:1;margin-left:10px}
+.wa-fab:focus-visible{outline:2px solid var(--barley-l);outline-offset:3px}
+/* pulso de atenção — desligado para quem pediu menos movimento */
+@media(prefers-reduced-motion:no-preference){
+  .wa-fab::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    animation:wa-pulse 2.6s var(--ease) infinite}
+}
+@keyframes wa-pulse{
+  0%{box-shadow:0 0 0 0 rgba(37,211,102,.45)}
+  70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}
+  100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}
+}
+
+/* BANNER DE CONSENTIMENTO (ConsentBanner.astro) — LGPD. Card no canto inferior
+   esquerdo; o GA só carrega no "Aceitar". z-index:100 → acima do FAB (70) e da
+   nav, abaixo do cursor (120)/preloader (200). Escondido por padrão via [hidden]
+   (o JS revela só na 1ª visita); a regra .consent[hidden] vence o display:flex. */
+.consent{position:fixed;left:clamp(16px,4vw,28px);bottom:clamp(16px,4vw,28px);z-index:100;
+  display:flex;flex-direction:column;gap:14px;max-width:min(400px,calc(100vw - 32px));
+  padding:20px 22px;border-radius:8px;background:rgba(17,17,25,.92);
+  backdrop-filter:blur(12px);border:1px solid var(--line-2);
+  box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.consent[hidden]{display:none}
+@media(prefers-reduced-motion:no-preference){
+  .consent:not([hidden]){animation:consent-in .5s var(--ease) both}
+}
+@keyframes consent-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.consent-text{font-size:13px;line-height:1.55;color:var(--muted)}
+.consent-text b{color:var(--rock);font-weight:600}
+.consent-link{color:var(--barley-l);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.consent-link:hover{color:var(--rock)}
+.consent-actions{display:flex;gap:10px;justify-content:flex-end}
+.consent-btn{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.01em;
+  padding:9px 18px;border-radius:999px;border:1px solid transparent;cursor:pointer;
+  transition:background .25s var(--ease),color .25s var(--ease),border-color .25s var(--ease)}
+.consent-btn.primary{background:var(--barley-l);color:var(--ink)}
+.consent-btn.primary:hover{background:var(--rock)}
+.consent-btn.ghost{background:transparent;border-color:var(--line-2);color:var(--muted)}
+.consent-btn.ghost:hover{color:var(--rock);border-color:var(--rock)}
+.consent-btn:focus-visible{outline:2px solid var(--barley-l);outline-offset:3px}
+/* Enquanto o banner está aberto no mobile, o FAB do WhatsApp sairia por baixo
+   dele — some até a escolha ser feita (interação de uma vez, só na 1ª visita). */
+@media(max-width:600px){
+  .consent{max-width:none;right:clamp(16px,4vw,28px)}
+  html.consent-pending .wa-fab{opacity:0;visibility:hidden;pointer-events:none}
+}
 
 /* AURORA — fundo animado do herói (ilha vanilla WebGL2, casada com a paleta).
    Fica dentro do .hero: z-index:0 (atrás do conteúdo em z-1 e da lombada .amp).

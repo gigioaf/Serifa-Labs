@@ -1,0 +1,150 @@
+---
+/**
+ * Política de Privacidade e Cookies (LGPD).
+ *
+ * Texto-base honesto sobre o que o site REALMENTE faz (Google Analytics
+ * mediante consentimento, contato por e-mail/WhatsApp). Identifica o Serifa Lab
+ * + e-mail como responsável — suficiente para um operador de pequeno porte, SEM
+ * exigir CNPJ ou DPO. Se um dia o estúdio virar empresa formal, dá para
+ * acrescentar razão social / CNPJ (e o encarregado, se houver).
+ */
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Grain from '../components/Grain.astro';
+import Cursor from '../components/Cursor.astro';
+import studio from '../data/studio.json';
+
+// Data da última revisão do TEXTO (não é a data do build de propósito — só muda
+// quando o conteúdo da política muda).
+const atualizado = 'julho de 2026';
+---
+<Base
+  title="Privacidade e Cookies — Serifa Lab"
+  description="Como o Serifa Lab trata dados e cookies, e como você controla seu consentimento."
+  path="/privacidade/"
+>
+  <Grain />
+  <Cursor />
+  <Nav base="/" />
+
+  <main class="legal">
+    <div class="wrap">
+      <div class="eyebrow">Legal</div>
+      <h1 class="serif">Privacidade &amp; Cookies</h1>
+      <p class="updated">Última atualização: {atualizado}</p>
+
+      <p>
+        Esta página explica, em linguagem clara, quais dados o Serifa Lab coleta,
+        por quê, e como você controla o que é usado — em linha com a Lei Geral de
+        Proteção de Dados (LGPD, Lei nº 13.709/2018).
+      </p>
+
+      <h2>Quem trata os dados</h2>
+      <p>
+        O responsável é o <b>Serifa Lab</b> ({studio.address.city} ·
+        {studio.address.country}). Para qualquer questão sobre seus dados, fale
+        com a gente em <a href={`mailto:${studio.email}`}>{studio.email}</a>.
+      </p>
+
+      <h2>Quais dados coletamos</h2>
+      <ul>
+        <li>
+          <b>Dados que você nos envia.</b> Quando você escreve por e-mail ou
+          WhatsApp, tratamos o que você compartilha (nome, contato, a mensagem)
+          apenas para responder e conduzir um eventual projeto.
+        </li>
+        <li>
+          <b>Dados de navegação (só com o seu aceite).</b> Se você aceitar os
+          cookies, o Google Analytics coleta, de forma agregada, informações como
+          páginas visitadas, tempo de permanência, tipo de dispositivo e uma
+          localização aproximada. Não usamos isso para identificar você
+          pessoalmente.
+        </li>
+      </ul>
+
+      <h2 id="cookies">Cookies</h2>
+      <p>
+        O site <b>não cria nenhum cookie até você clicar em “Aceitar”</b> no aviso
+        que aparece na primeira visita. Se você recusar, nada é instalado. Os
+        únicos cookies que usamos são de análise (Google Analytics 4):
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Cookie</th><th>Finalidade</th><th>Validade</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>_ga</code></td><td>Distingue visitantes de forma anônima</td><td>2 anos</td></tr>
+            <tr><td><code>_ga_*</code></td><td>Mantém o estado da sessão do Analytics</td><td>2 anos</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Você pode mudar de ideia a qualquer momento: use o link
+        <b>“Cookies”</b> no rodapé para reabrir o aviso, ou limpe os cookies pelo
+        seu navegador. Ao recusar, removemos os cookies de análise já existentes.
+      </p>
+
+      <h2>Com quem compartilhamos</h2>
+      <p>
+        Se você aceitar a análise, os dados de navegação são processados pelo
+        <b>Google</b> (Google Analytics). Não vendemos nem cedemos seus dados a
+        terceiros para fins de marketing.
+      </p>
+
+      <h2>Base legal</h2>
+      <ul>
+        <li><b>Consentimento</b> (art. 7º, I) para os cookies de análise.</li>
+        <li><b>Execução de contrato e legítimo interesse</b> para responder ao seu contato e conduzir o projeto.</li>
+      </ul>
+
+      <h2>Seus direitos</h2>
+      <p>
+        A LGPD garante que você possa confirmar o tratamento, acessar, corrigir,
+        excluir ou portar seus dados, além de revogar o consentimento a qualquer
+        momento. Para exercer qualquer direito, escreva para
+        <a href={`mailto:${studio.email}`}>{studio.email}</a>.
+      </p>
+
+      <h2>Alterações</h2>
+      <p>
+        Podemos atualizar esta política para refletir mudanças no site ou na
+        legislação. A data no topo indica a última revisão.
+      </p>
+
+      <a class="btn-primary legal-back" href="/">Voltar ao início</a>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script>
+    // Mesma ilha de efeitos das outras páginas (nav solidifica no scroll,
+    // cursor customizado). GSAP só entra quando o movimento é permitido.
+    import '../scripts/effects-base';
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      import('../scripts/effects-gsap');
+    }
+  </script>
+</Base>
+
+<style>
+  .legal { padding: clamp(120px, 17vh, 190px) 0 clamp(80px, 12vh, 140px); }
+  .legal .eyebrow { margin-bottom: 18px; }
+  .legal h1 { font-family: var(--geo); font-weight: 400; color: var(--rock); font-size: clamp(34px, 6vw, 68px); line-height: 1.04; }
+  .legal .updated { margin-top: 14px; font-size: 13px; color: var(--faint); letter-spacing: .02em; }
+  .legal > .wrap > p { margin-top: 20px; max-width: 62ch; font-size: 16px; line-height: 1.7; color: var(--muted); }
+  .legal h2 { font-family: var(--geo); font-weight: 400; color: var(--rock); font-size: clamp(19px, 2.4vw, 26px); margin: 46px 0 6px; }
+  .legal ul { margin-top: 14px; max-width: 62ch; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .legal li { font-size: 16px; line-height: 1.65; color: var(--muted); }
+  .legal b { color: var(--rock); font-weight: 600; }
+  .legal a { color: var(--barley-l); text-decoration: none; }
+  .legal a:hover { text-decoration: underline; }
+  .table-wrap { margin-top: 18px; max-width: 62ch; overflow-x: auto; }
+  .legal table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .legal th, .legal td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); color: var(--muted); }
+  .legal th { color: var(--rock); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
+  .legal code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 13px; color: var(--barley-l); }
+  .legal-back { display: inline-flex; margin-top: 52px; }
+</style>

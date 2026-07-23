@@ -1,334 +1,380 @@
 # Serifa Lab
 
-Site de marketing do **Serifa Lab** — estúdio de design & código. Estático,
-construído em [Astro](https://astro.build), com **zero JavaScript por padrão**;
-as animações (GSAP + ScrollTrigger) são uma "ilha" carregada só quando o
-usuário permite movimento.
+Site de marketing do **Serifa Lab** — estúdio de design & código. Site estático
+em [Astro](https://astro.build) com **zero JavaScript por padrão**; as animações
+(GSAP + ScrollTrigger) são uma "ilha" carregada só quando o visitante permite
+movimento.
 
-Portado 1:1 de `serifa-lab_12.html` (a fonte da verdade original). Layout,
-paleta, tipografia, textos, logo e todos os efeitos foram preservados.
+- **Produção:** <https://serifalabs.com>
+- **Stack:** Astro 5 · CSS puro · GSAP (opcional) · fontes self-hosted
+- **Deploy:** push na `main` → GitHub Actions faz o build e envia para a Hostinger
 
 ---
 
-## Rodar o projeto
+## Índice
+
+1. [Início rápido](#início-rápido)
+2. [Estrutura do projeto](#estrutura-do-projeto)
+3. [Configuração](#configuração)
+4. [Editar o conteúdo](#editar-o-conteúdo)
+5. [Recursos de conversão](#recursos-de-conversão)
+6. [Checklist antes de publicar](#-checklist-antes-de-publicar)
+7. [Deploy](#deploy)
+8. [Componentes & efeitos](#componentes--efeitos)
+9. [Portfólio](#portfólio)
+10. [Logo](#logo)
+11. [Acessibilidade & performance](#acessibilidade--performance)
+
+---
+
+## Início rápido
 
 Requer **Node 22** (veja `.nvmrc`).
 
 ```bash
 npm install        # instala dependências
-npm run dev        # servidor de desenvolvimento → http://localhost:4321
+npm run dev        # desenvolvimento → http://localhost:4321
 npm run build      # gera o site estático em dist/
 npm run preview    # serve o build de dist/ localmente
 ```
 
-Scripts utilitários (não precisam rodar no dia a dia — já foram executados e os
-resultados estão commitados):
+> **Testar Analytics/banner de cookies:** eles só entram em **build de
+> produção** (para não sujar os relatórios no `dev`). Use
+> `npm run build && npm run preview`.
+
+<details>
+<summary>Scripts utilitários (uso pontual, já executados)</summary>
 
 ```bash
-npm run extract:logos   # re-extrai os PNGs do logo de serifa-lab_12.html → src/assets/
-npm run gen:assets      # re-gera favicon + og-image + logo-serifa a partir do logo
+npm run extract:logos   # re-extrai os PNGs do logo de serifa-lab_12.html
+npm run process:mark    # regenera src/assets/mark.png a partir de mark-source.png
+npm run gen:assets      # regenera favicon + og-image + logo-serifa
+```
+</details>
+
+---
+
+## Estrutura do projeto
+
+```
+src/
+  layouts/
+    Base.astro            # <head>, SEO, Open Graph, JSON-LD, fontes, tokens
+                          #   + inclui WhatsappFab e ConsentBanner (globais)
+  components/
+    Nav · Hero · Seal · Manifesto · Stats · Services · Work · Quote · Process
+    Faq · Palette · TypeSpecimen · Closing · Footer         # blocos da página
+    Preloader · Cursor · Folio · Grain · Toc                # overlays fixos
+    WhatsappFab.astro     # botão flutuante de WhatsApp (conversão)
+    ConsentBanner.astro   # banner de cookies (LGPD) + carregamento do GA
+  pages/
+    index.astro           # a home — compõe todos os blocos
+    trabalho/[slug].astro # 1 página de case por item de data/cases.json
+    privacidade.astro     # política de privacidade e cookies
+    obrigado.astro        # sucesso do formulário (opcional, noindex)
+    404.astro
+  scripts/
+    effects-base.ts       # efeitos SEM GSAP (sempre): nav, cursor, fólio, FAQ…
+    effects-gsap.ts       # ilha de movimento (GSAP) — só se houver movimento
+    aurora.ts             # fundo Aurora do herói (WebGL2)
+  styles/global.css       # tokens + TODO o CSS (global de propósito)
+  data/
+    studio.json           # dados do estúdio, redes, analytics
+    services.json · projects.json · cases.json · faq.json
+  assets/
+    logo.png · logo-s.png # wordmark + "S" (máscaras CSS)
+    mark.png              # ícone/marca (frasco) — máscara, de mark-source.png
+    mark-source.png       # ícone original enviado (fonte do mark.png)
+public/
+  cases/<slug>/           # imagens dos cases (.webp) + og.jpg
+  favicon.* · apple-touch-icon.png · og-image.png · logo-serifa.png
+  robots.txt · .htaccess  # .htaccess = cache/404/redirects na Hostinger
+.github/workflows/
+  deploy.yml              # build + deploy FTP para a Hostinger
+astro.config.mjs          # site (domínio), sitemap
+serifa-lab_12.html        # HTML original (referência / fonte dos geradores)
 ```
 
 ---
 
-## Estrutura
+## Configuração
 
-```
-src/
-  layouts/Base.astro        # <head>, SEO, Open Graph/Twitter, JSON-LD, fontes, tokens
-  components/
-    Nav.astro  Hero.astro  Seal.astro  Manifesto.astro  Stats.astro
-    Services.astro          # 4 painéis sticky        (data/services.json)
-    Work.astro              # grade de cards + artes em CSS (data/projects.json)
-    Quote.astro  Process.astro  Faq.astro                (data/faq.json)
-    Palette.astro           # specimen do sistema de cor
-    TypeSpecimen.astro      # playground tipográfico interativo (ilha vanilla)
-    Closing.astro  Footer.astro
-    Preloader.astro  Cursor.astro  Folio.astro  Grain.astro
-    Toc.astro               # sumário "line sidebar" (navegação de seções à direita)
-  pages/
-    index.astro             # a página — compõe todos os componentes
-    obrigado.astro          # página de sucesso do formulário (opcional)
-  scripts/
-    effects-base.ts         # efeitos SEM GSAP (rodam sempre): preloader failsafe,
-                            #   nav, empilhamento 3D, cursor, fólio, FAQ
-    effects-gsap.ts         # ilha de movimento (GSAP): preloader, hero, reveals,
-                            #   parallax, botões magnéticos — importada só se houver movimento
-    aurora.ts               # fundo Aurora do herói (ilha WebGL2, casada c/ paleta)
-  styles/global.css         # tokens + TODO o CSS (global de propósito — ver nota)
-  data/
-    studio.json  services.json  projects.json  faq.json
-  assets/
-    logo.png  logo-s.png    # wordmark + "S" extraídos do base64 do HTML original
-    mark.png                # ÍCONE/MARCA (frasco) como máscara — gerado de mark-source.png
-    mark-source.png         # o ícone original enviado (PNG hi-res), fonte do mark.png
-public/
-  trabalho/                 # demos autocontidas do portfólio (HTML estático)
-    brasa/  volt/  marfim/
-  favicon.svg  favicon.png  apple-touch-icon.png
-  og-image.png  logo-serifa.png   # gerados a partir do logo
-  robots.txt
-scripts/
-  extract-logos.mjs  generate-assets.mjs   # geradores (Node, uso pontual)
-serifa-lab_12.html          # HTML original (referência / fonte dos geradores)
-brasa.html  volt.html       # demos originais (fonte de public/trabalho/)
-```
+Tudo que você precisa ajustar antes de publicar está em poucos lugares:
 
-### Por que todo o CSS está em um único `global.css`?
-
-A ilha GSAP seleciona elementos pelos nomes de classe (`.reveal`, `.panel`,
-`.pcard`, `.faq-item`…). Os blocos `<style>` do Astro são **escopados** — eles
-renomeiam as classes e quebrariam todas as interações. Por isso o sistema
-inteiro vive em `global.css` como CSS global. Os **tokens** (paleta, fontes,
-espaçamentos) estão no topo desse arquivo.
-
-### Sobre a "ilha" de efeitos (client:load / client:visible)
-
-Os componentes são `.astro` puros (sem React/Vue), então não há diretivas
-`client:load`/`client:visible` literais — elas só existem para componentes de
-framework. O mesmo comportamento foi reproduzido em JS vanilla:
-
-- **`effects-base.ts`** roda imediatamente (equivalente a `client:load`), sem
-  GSAP. Contém tudo que precisa funcionar sempre — inclusive com movimento
-  reduzido ou se o GSAP falhar.
-- **`effects-gsap.ts`** é importado dinamicamente **só quando o movimento é
-  permitido** (equivalente a `client:visible`/deferido). Quem usa
-  `prefers-reduced-motion` baixa **zero** de GSAP.
-
-Todos os guards do original foram mantidos: `prefers-reduced-motion` desliga
-preloader/cursor/magnetismo/animações; cursor e magnetismo só em `pointer:fine`;
-o preloader **sempre** se remove (a página nunca fica presa).
-
-### Playground tipográfico (`TypeSpecimen.astro`)
-
-A seção **Tipografia** (`#tipografia`, depois da Paleta) é um specimen interativo
-da **Fraunces variável**: sliders de peso (`wght`), tamanho óptico (`opsz`) e
-tamanho, toggle de itálico e um campo para digitar sua própria palavra. O script
-dirige `font-variation-settings` ao vivo (os eixos existem porque a fonte
-self-hosted usa o corte `opsz` do @fontsource).
-
-É uma **ilha vanilla** (um `<script>` de componente, ~1KB, sem runtime de
-framework) — escolha deliberada de performance para um widget baseado em
-`<input type="range">`. Sem JS, o specimen renderiza nos valores padrão do
-markup; funciona também com `prefers-reduced-motion` (é dirigido pelo usuário,
-não é auto-animação).
-
-> Quer em **React**? Dá para converter para uma ilha React (`@astrojs/react` +
-> `client:visible`) sem tocar no resto do site — peça e eu troco. Para este
-> efeito específico, o vanilla entrega a mesma UX com zero runtime.
-
-### Aurora — fundo animado do herói (`aurora.ts`)
-
-Um fundo **aurora** em WebGL2 atrás do herói (porte vanilla do "Aurora" do
-React Bits, que usa a lib `ogl` + um shader de simplex-noise). Sem React e **sem
-a dependência `ogl`** — só um triângulo full-screen e um fragment shader. Os
-*color stops* foram trocados pela **paleta da Serifa** (barley → akaroa →
-barley-l). O canvas vive dentro do `.hero`, então:
-
-- **Escopo:** aparece **só na primeira tela** — recortado pelo `overflow:hidden`
-  do herói. A simulação **pausa** quando o herói sai da viewport
-  (IntersectionObserver) e quando a aba fica oculta (`document.hidden`).
-- **Gate:** desligado em `prefers-reduced-motion` (o módulo WebGL, ~2&thinsp;KB
-  gzip, **nem é baixado**); DPR limitado a 2.
-- **Fallback:** sem WebGL2, o herói mostra o fundo `--shaft` normal (sem erro).
-- **Camadas:** `z-index:0` dentro do herói — atrás do conteúdo (`z-1`) e da
-  lombada `.amp`. O cursor customizado e o resto do site seguem intactos.
-
-**Ajustes rápidos** (`src/scripts/aurora.ts`):
-- **Cores:** `config.colorStops` (3 hex da paleta).
-- **Intensidade / mistura / velocidade:** `config.amplitude`, `config.blend`, `config.speed`.
-- **Orientação:** o shader concentra a aurora no topo (padrão do React Bits).
-  Para levá-la para baixo, troque `uv.y` por `1.0 - uv.y` no `main()` do FRAG.
-- **Remover:** apague o `<canvas class="aurora">` e o `<script>` de
-  `src/components/Hero.astro`.
-
-> Nota: por ser WebGL rodando na GPU, é um efeito com custo — mas contido ao
-> herói e pausado fora dele. Se o Lighthouse de performance cair abaixo da meta
-> em máquinas modestas, é o primeiro candidato a revisar.
-
-### Selo giratório — "circular text" (`Seal.astro`)
-
-Substituiu a antiga marca d'água vertical "SERIFA" do herói. É um **selo
-giratório** (porte vanilla do React Bits *Circular Text*): o texto
-`SERIFA LAB · DESIGN & CÓDIGO ·` orbita o **"S"** do logo (parado no centro),
-em bronze, no lado direito do herói.
-
-- **Sem React:** cada caractere é uma `<span>` rotacionada para a sua posição; a
-  rotação contínua é um `@keyframes` de CSS (`.circular-text`), que **para em
-  `prefers-reduced-motion`** (vira um selo estático).
-- **Parallax:** herdou o drift leve de scroll + mouse da lombada antiga — agora
-  no `.seal` (retargeteado em `effects-gsap.ts`); some sob movimento reduzido.
-- **Decorativo:** `aria-hidden`, `pointer-events:none`, atrás do conteúdo (z-0).
-- **Editar:** o texto está em `src/components/Seal.astro` (`const text`); os
-  ângulos são recalculados sozinhos. Cor/tamanho/velocidade em `.seal*` /
-  `@keyframes seal-spin` (`global.css`). Para tirar o "S" central, remova
-  `.seal-mark`.
-
-### Sumário — "line sidebar" (`Toc.astro`)
-
-Navegação de seções fixa à **direita** (porte vanilla do React Bits *Line
-Sidebar* — só CSS + estado ativo, **sem React**). Cada item é uma linha que
-cresce e revela o rótulo no hover/foco; a linha da seção atual fica em bronze.
-
-- **Sincronizado com o fólio:** o mesmo `IntersectionObserver` em
-  `effects-base.ts` controla os dois — o sumário aparece fora do herói (classe
-  `.on`) e marca `.active` no item cujo `data-n` bate com a numeração editorial
-  (01 Manifesto → 07 Contato). **Sem JS extra** além desse observer.
-- **Links reais:** cada item é um `<a href="#secao">`, então **funciona sem JS**
-  (scroll suave nativo). O JS só adiciona o destaque da seção atual.
-- **Responsivo/a11y:** escondido `<1024px` e no herói (`visibility:hidden`, fora
-  da ordem de tabulação); rótulos legíveis por leitor de tela e no foco de teclado.
-- **Editar itens:** a lista está em `src/components/Toc.astro` (mantenha os
-  `data-n` em sincronia com o mapa do fólio em `effects-base.ts`). Para mudar de
-  lado, troque `right` por `left` em `.toc` (em `global.css`).
-
-### Botões especulares (`.specular`)
-
-Porte vanilla do React Bits *Specular Button*: um **brilho especular que segue o
-cursor** sobre o botão, com um leve realce no topo (glossy). Reflexo na paleta
-(White Rock), `mix-blend-mode: screen`.
-
-- **Onde:** aplicado via classe `.specular` nos botões `.btn-primary` (herói),
-  `.pill` (nav) e `.chip-toggle` (specimen tipográfico). Para dar o efeito a um
-  novo botão, é só adicionar a classe `specular`.
-- **Como:** o highlight é um `::before` com `radial-gradient` em `--mx/--my`,
-  atualizados no `mousemove` por `effects-base.ts` (só `pointer:fine`). **Sem JS
-  ou em touch**, o CSS `:hover`/`:focus-visible` mostra o brilho **centralizado**
-  — o botão nunca fica quebrado. Sem chunk JS novo.
-- **Não aplicado a:** links de texto (`.btn-ghost`, `.mail`) e às linhas do FAQ
-  (`.faq-q`), que não são botões preenchidos — o efeito ficaria estranho neles.
-  Se quiser incluí-los, é só acrescentar `specular` a eles.
-- **Ajustar:** cor/tamanho do reflexo no `.specular::before` (`global.css`).
+| O que | Onde | Observação |
+|---|---|---|
+| **Domínio** | `astro.config.mjs` (`site`) + `public/robots.txt` | Os dois precisam bater. Alimenta canonical, Open Graph, JSON-LD e sitemap. |
+| **E-mail** | `studio.json` → `email` | Alimenta rodapé, CTA de contato e JSON-LD. |
+| **Instagram / WhatsApp** | `studio.json` → `social` | O WhatsApp também vira o botão flutuante. |
+| **Google Analytics** | `studio.json` → `analytics.ga4` | ID `G-XXXXXXX`. Vazio = desligado. Carrega só com consentimento. |
 
 ---
 
 ## Editar o conteúdo
 
 Quase todo o texto vive em `src/data/*.json`. Edite e o site se atualiza no
-próximo build. Use exatamente os textos que quiser publicar.
+próximo build.
 
 ### `studio.json` — dados do estúdio
+
 ```jsonc
 {
+  "name": "Serifa Lab",
   "email": "contato@serifalabs.com",
-  "founded": "2025",
+  "founded": "2025",                      // ano de fundação (JSON-LD, "desde 2025")
   "address": { "city": "São Paulo", "region": "SP", "country": "Brasil", "countryCode": "BR" },
-  "social": [                             // ⚠ confirmar URLs (hoje são "#")
-    { "label": "Instagram", "url": "#" },
-    { "label": "Behance",   "url": "#" },
-    { "label": "LinkedIn",  "url": "#" }
+  "social": [
+    { "label": "Instagram", "url": "https://www.instagram.com/serifalabs/" },
+    { "label": "WhatsApp",  "url": "https://wa.me/5513991059755" }
   ],
-  "stats": [                              // ⚠ confirmar os 4 números da seção Stats
-    { "n": "3", "l": "Projetos entregues em 2025" },
-    { "n": "100", "em": "%", "l": "Sob medida — nenhum template" }  // "em" = sufixo em bronze
+  "analytics": { "ga4": "G-XXXXXXX" },    // vazio = Analytics desligado
+  "stats": [                              // os 4 números da seção Stats
+    { "n": "3",   "l": "Projetos entregues em 2025" },
+    { "n": "100", "em": "%", "l": "Sob medida — nenhum template" }  // "em" = sufixo em destaque
   ]
 }
 ```
-Isso alimenta a seção **Stats**, o **rodapé**, o CTA de e-mail e o **JSON-LD**.
 
-### `services.json` — os 4 painéis empilhados
-Cada item: `face` (`f-rock` | `f-akaroa` | `f-barley` | `f-shaft`), `num`,
-`title` e 3 `cells` com `lab`+`text`. Obs.: a pedido, o fundo do painel `f-rock`
-foi trocado de White Rock para **Mine Shaft** (o nome da classe permanece, mas
-agora ele é escuro com texto claro); o arco dos painéis ficou
-shaft → akaroa → barley → shaft.
+Alimenta a seção **Stats**, o **rodapé**, o CTA de e-mail e o **JSON-LD**. URLs
+`#` em `social` são ignoradas no `sameAs` do JSON-LD.
 
-### `projects.json` — os cards do portfólio
-Cada item: `name` (título do card), `display` (texto grande da mini-arte), `tags`,
-`year`, `route` (destino do link) e `art` (`brasa` | `volt` | `marfim` — a chave
-da arte CSS; **as mini-artes são CSS puro**, definidas em `global.css`).
+### Outros arquivos de dados
 
-### `faq.json` — perguntas e respostas
-Lista de `{ "q": "...", "a": "..." }`. O accordion e o `aria-expanded` são
-automáticos.
+- **`services.json`** — os 4 painéis empilhados. Cada item: `face`
+  (`f-rock` | `f-akaroa` | `f-barley` | `f-shaft`), `num`, `title` e 3 `cells`
+  com `lab`+`text`.
+- **`projects.json`** — os cards do portfólio na home. Cada item: `name`,
+  `display` (texto grande da mini-arte), `tags`, `year`, `route` e `art`
+  (`brasa` | `volt` | `marfim` — a arte CSS).
+- **`cases.json`** — o conteúdo de cada **página de case** (`/trabalho/<slug>/`):
+  headline, lede, overview, meta, galeria, etc.
+- **`faq.json`** — lista de `{ "q", "a" }`. Accordion e `aria-expanded`
+  automáticos.
 
-> Textos que **não** estão em JSON (por serem estáticos): Manifesto, Quote,
-> Process e o specimen de Palette ficam inline nos respectivos componentes
-> em `src/components/`.
+> Textos **estáticos** (não em JSON): Manifesto, Quote, Process e o specimen de
+> Palette ficam inline nos respectivos componentes.
 
 ---
 
-## ✅ Checklist de placeholders (antes de publicar)
+## Recursos de conversão
+
+### Botão flutuante de WhatsApp (`WhatsappFab.astro`)
+Fixo no canto inferior direito, em todas as páginas. O número vem de
+`studio.json` → `social` (mesma fonte do rodapé) e o link já leva mensagem
+pré-preenchida. Some se o item "WhatsApp" for removido.
+
+### Analytics + consentimento (LGPD)
+O **Google Analytics 4** só carrega — e só cria cookies — **depois do "Aceitar"**
+no banner (`ConsentBanner.astro`). "Recusar" não dispara nada e ainda remove
+cookies de análise existentes. A escolha fica em `localStorage`
+(`serifa-consent`), então o banner só aparece na primeira visita.
+
+- **Reabrir / trocar a escolha:** link **"Cookies"** no rodapé.
+- **Política:** página `/privacidade/` (`privacidade.astro`), linkada no banner
+  ("Saiba mais") e no rodapé.
+
+> A página identifica o **Serifa Lab + e-mail** como responsável — proporcional
+> para um operador de pequeno porte, **sem exigir CNPJ ou DPO**. Ao formalizar
+> como empresa, dá para acrescentar razão social / CNPJ.
+
+### Linha clara no herói
+A proposta de valor abaixo do título (`Hero.astro` → `.sub`) tem realce de
+legibilidade para ser lida de imediato — é a "linha que converte".
+
+---
+
+## ✅ Checklist antes de publicar
 
 - [ ] **Depoimento (Quote) — FABRICADO.** "Camila Duarte · Brasa" é inventado.
-      **Recomendação: REMOVER a seção** até existir um depoimento real e
-      atribuível. Para remover, apague `<Quote />` de `src/pages/index.astro`
-      (o componente `Quote.astro` pode ficar guardado). Nunca publique
-      depoimento inventado.
-- [x] **E-mail** `contato@serifalabs.com` (`studio.json`).
-- [x] **Redes sociais** — só o Instagram (`studio.json` → `social`), já com a
-      URL real. Para acrescentar outra rede, basta um novo item na lista; URLs
-      `#` são ignoradas no `sameAs` do JSON-LD.
+      **Recomendação: REMOVER** até ter um depoimento real e atribuível — apague
+      `<Quote />` de `src/pages/index.astro`. Nunca publique depoimento inventado.
 - [ ] **Números da Stats** — confirmar os 4 valores (`studio.json` → `stats`).
-- [ ] **Marfim** — veja abaixo.
-- [x] **Domínio** — `https://serifalabs.com`, definido em `astro.config.mjs`
-      (`site`) e no `Sitemap:` do `public/robots.txt`. Os dois precisam bater.
+- [ ] **Marfim** — página de case placeholder (veja [Portfólio](#portfólio)).
+- [x] **Privacidade** — página `/privacidade/` identifica o estúdio + e-mail
+      (suficiente sem CNPJ). Só acrescente razão social / CNPJ se formalizar.
+- [x] **E-mail** — `contato@serifalabs.com` (`studio.json`).
+- [x] **Redes sociais** — Instagram + WhatsApp com URLs reais (`studio.json`).
+- [x] **Google Analytics 4** — configurado, com opt-in via banner de cookies.
+- [x] **Domínio** — `https://serifalabs.com` (`astro.config.mjs` + `robots.txt`).
 
 ---
 
-## Portfólio / trabalho
+## Deploy
 
-Os cards linkam para demos **autocontidas** servidas em `/trabalho/`:
+O site é publicado na **Hostinger** automaticamente a cada push na `main`, via
+**GitHub Actions**.
 
-- `/trabalho/brasa/`  → cópia de `brasa.html`
-- `/trabalho/volt/`   → cópia de `volt.html`
-- `/trabalho/marfim/` → **placeholder** (veja nota)
+### Como funciona
 
-São demos estáticas — **não** foram convertidas para Astro. No futuro, cada uma
-pode virar uma página de case própria, ou o `route` em `projects.json` pode
-apontar para o site real do cliente.
+```
+push na main → GitHub Actions (.github/workflows/deploy.yml)
+             → npm ci → npm run build → envia dist/ por FTP → public_html
+```
 
-> ⚠ **Marfim:** o arquivo `marfim-odontologia.html` **não existia** na pasta
-> original (só havia `brasa.html` e `volt.html`). Foi criada uma página
-> "case em breve" on-brand em `public/trabalho/marfim/index.html` para o card
-> não apontar para um 404. Substitua-a pelo HTML real do case, aponte o card
-> para o site do cliente (edite `route` em `projects.json`), ou remova o item
-> Marfim do JSON.
+O Git nativo da Hostinger **não roda build** (só faz pull), e o que vai para o ar
+é o `dist/` gerado — por isso o build acontece no GitHub e só o resultado sobe.
+
+### Configuração (uma vez)
+
+No GitHub, em **Settings → Secrets and variables → Actions**, crie 3 secrets
+(pegue os valores em hPanel → Arquivos → Contas FTP):
+
+| Secret | Valor |
+|---|---|
+| `FTP_SERVER` | host FTP (ex.: `ftp.serifalabs.com`) ou o IP |
+| `FTP_USERNAME` | usuário FTP |
+| `FTP_PASSWORD` | senha FTP |
+
+O destino (`server-dir`) está fixado no workflow como
+`/domains/serifalabs.com/public_html/` — o docroot real da conta.
+
+### Publicar
+
+```bash
+git add -A && git commit -m "..."
+git push origin main
+```
+
+Acompanhe em **Actions** no GitHub. O primeiro deploy demora mais; os seguintes
+enviam só o que mudou.
+
+### Notas
+
+- **`.htaccess`** (`public/.htaccess`) faz cache dos assets, a 404 do site e os
+  redirects `http→https` / `www→raiz` na Hostinger (equivalente ao
+  `netlify.toml`, que a Hostinger ignora). Sobe junto no build.
+- **SSL / `www`:** o redirect de `www` só funciona depois do certificado cobrir
+  `www.serifalabs.com` (emitir no hPanel).
+
+<details>
+<summary>Deploy alternativo (Netlify)</summary>
+
+O projeto ainda traz um `netlify.toml` (`build = npm run build`, `publish =
+dist`, Node 22). Para usar a Netlify: **Add new site → Import an existing
+project** e selecione o repo — o `netlify.toml` cuida do resto. Os dois hosts
+convivem; cada um lê o seu arquivo de config.
+</details>
+
+---
+
+## Componentes & efeitos
+
+<details>
+<summary><b>Por que todo o CSS está em um único <code>global.css</code>?</b></summary>
+
+A ilha GSAP seleciona elementos pelos nomes de classe (`.reveal`, `.panel`,
+`.pcard`, `.faq-item`…). Os blocos `<style>` do Astro são **escopados** — eles
+renomeiam as classes e quebrariam todas as interações. Por isso o sistema
+inteiro vive em `global.css`. Os **tokens** (paleta, fontes, espaçamentos) estão
+no topo do arquivo.
+
+Exceção: componentes que o GSAP não toca (ex.: `obrigado.astro`,
+`privacidade.astro`) usam `<style>` escopado sem problema.
+</details>
+
+<details>
+<summary><b>A "ilha" de efeitos (base vs. GSAP)</b></summary>
+
+Os componentes são `.astro` puros (sem React/Vue), então não há diretivas
+`client:load`/`client:visible` — o mesmo comportamento foi reproduzido em JS
+vanilla:
+
+- **`effects-base.ts`** roda imediatamente (≈ `client:load`), sem GSAP. Contém
+  tudo que precisa funcionar sempre — inclusive com movimento reduzido ou se o
+  GSAP falhar.
+- **`effects-gsap.ts`** é importado **só quando o movimento é permitido** (≈
+  `client:visible`). Quem usa `prefers-reduced-motion` baixa **zero** de GSAP.
+
+Guards mantidos: `prefers-reduced-motion` desliga preloader/cursor/animações;
+cursor e magnetismo só em `pointer:fine`; o preloader **sempre** se remove.
+</details>
+
+<details>
+<summary><b>Aurora — fundo WebGL2 do herói (<code>aurora.ts</code>)</b></summary>
+
+Fundo aurora em WebGL2 atrás do herói (porte vanilla do "Aurora" do React Bits,
+**sem a dependência `ogl`** — só um triângulo full-screen + fragment shader).
+Color stops trocados pela paleta da Serifa.
+
+- **Escopo:** só na primeira tela (recortado pelo `overflow:hidden` do herói);
+  **pausa** fora da viewport e com a aba oculta.
+- **Gate:** desligado em `prefers-reduced-motion` (o módulo nem é baixado); DPR
+  limitado a 2.
+- **Fallback:** sem WebGL2, o herói mostra o fundo `--shaft` normal.
+- **Ajustes** (`src/scripts/aurora.ts`): `config.colorStops`, `config.amplitude`,
+  `config.blend`, `config.speed`. **Remover:** apague o `<canvas class="aurora">`
+  e o `<script>` de `Hero.astro`.
+</details>
+
+<details>
+<summary><b>Selo giratório, Sumário lateral, Botões especulares, Specimen tipográfico</b></summary>
+
+- **Selo (`Seal.astro`):** texto circular `SERIFA LAB · DESIGN & CÓDIGO ·`
+  orbitando o "S". Cada caractere é uma `<span>` rotacionada; a rotação é
+  `@keyframes` CSS que **para** em `prefers-reduced-motion`. Decorativo
+  (`aria-hidden`). Texto em `const text`.
+- **Sumário (`Toc.astro`):** navegação de seções fixa à direita (CSS + estado
+  ativo, sem React). O mesmo `IntersectionObserver` de `effects-base.ts` controla
+  sumário e fólio (numeração **01 Manifesto → 06 Contato**). Links reais
+  (`<a href="#secao">`) funcionam sem JS. Escondido `<1024px`. Mantenha os
+  `data-n` em sincronia com o mapa do fólio em `effects-base.ts`.
+- **Botões especulares (`.specular`):** brilho que segue o cursor. Aplicado em
+  `.btn-primary`, `.pill` e `.chip-toggle`. Sem JS/em touch, o `:hover` mostra o
+  brilho centralizado. Para dar a um novo botão, adicione a classe `specular`.
+- **Specimen (`TypeSpecimen.astro`):** playground da Fraunces variável (sliders
+  `wght`/`opsz`/tamanho, itálico, campo de texto) dirigindo
+  `font-variation-settings` ao vivo. Ilha vanilla ~1KB. Sem JS, renderiza nos
+  valores padrão.
+</details>
+
+---
+
+## Portfólio
+
+Os cards da home (`projects.json`) linkam para **páginas de case** geradas por
+`src/pages/trabalho/[slug].astro` a partir de `data/cases.json` — uma página por
+item, dentro do site (mesma nav, rodapé, tipografia):
+
+- `/trabalho/brasa/` · `/trabalho/volt/` · `/trabalho/marfim/`
+
+As imagens ficam em `public/cases/<slug>/`.
+
+> ⚠ **Marfim** é um case **placeholder** ("em breve"). Complete o conteúdo em
+> `data/cases.json` e as imagens em `public/cases/marfim/`, aponte o `route` em
+> `projects.json` para outro destino, ou remova o item.
 
 ---
 
 ## Logo
 
-### Ícone/marca — o frasco (`--mark`)
-
-O ícone do estúdio (frasco de laboratório com as bolhas) é a **marca oficial**,
-usada ao lado do nome. O arquivo original enviado está em
-`src/assets/mark-source.png`; dele é gerado `src/assets/mark.png` — uma **máscara
-CSS** (a forma do frasco vive no canal alpha, fundo transparente), então ele
-assume as cores da paleta como o wordmark.
-
-Aparece via o token **`--mark`** em: nav e rodapé (ícone + nome), preloader, selo
-giratório do herói, bloco final (Closing), **favicon**,
-**og-image** e o **logo do JSON-LD**. (Substituiu o antigo "S" — o `logo-s.png`
-ficou sem uso.)
+O ícone do estúdio (frasco de laboratório) é a **marca oficial**, usada como
+**máscara CSS** — assume as cores da paleta. Aparece via o token `--mark` em: nav
+e rodapé, preloader, selo do herói, bloco final, **favicon**, **og-image** e o
+logo do JSON-LD. O wordmark `SERIFA` (`--logo`) e o "S" (`--logo-s`) também são
+máscaras, extraídas do HTML original.
 
 **Trocar o ícone / regenerar:**
 1. substitua `src/assets/mark-source.png` pelo novo arquivo (PNG preto sobre
    branco, ou transparente);
-2. `npm run process:mark` → regenera `src/assets/mark.png` (converte para máscara
-   e recorta justo);
+2. `npm run process:mark` → regenera `src/assets/mark.png`;
 3. `npm run gen:assets` → regenera favicon / apple-touch / og-image / logo-serifa.
 
-> Dica: se você tiver o **SVG vetorial** do frasco, ele fica ainda mais nítido em
-> qualquer tamanho. Dá para apontar `--mark` direto para o `.svg` (como máscara)
-> e ajustar o `generate-assets.mjs` para usá-lo. O `mark.png` atual (máscara
-> rasterizada ~600px) já atende bem os usos do site.
+> 🔁 **Recomendação:** quando tiver os **SVGs vetoriais** do ícone e do wordmark,
+> troque os PNGs — um SVG como máscara fica nítido em qualquer tela. Basta
+> atualizar `--mark` / `--logo` em `global.css`.
 
-### Wordmark `SERIFA` (o nome)
+---
 
-O wordmark e o "S" foram **extraídos** do base64 do HTML original para
-`src/assets/logo.png` (e `logo-s.png`). O wordmark (`--logo`) continua sendo a
-grafia do nome, usado como **máscara CSS** — assume as cores da paleta.
+## Acessibilidade & performance
 
-> 🔁 **Recomendação:** quando você tiver o arquivo vetorial original do logo,
-> troque esses PNGs por **SVG**. Um SVG como máscara fica nítido em qualquer
-> tamanho/densidade de tela e reduz peso. Ao trocar, basta atualizar
-> `--logo` / `--logo-s` em `global.css` (e, se quiser regenerar favicon/og,
-> ajuste `scripts/generate-assets.mjs`).
-
-**favicon** e **og-image** são gerados a partir do logo por
-`scripts/generate-assets.mjs` (o "S" em bronze sobre `--shaft` para o favicon;
-o wordmark em rock sobre `--shaft` para a og-image, 1200×630).
+- HTML semântico com landmark `<main>`; foco de teclado visível
+  (`:focus-visible`) — o cursor customizado **não** remove o outline.
+- Accordion com `aria-expanded` / `aria-controls` / `aria-labelledby`.
+- Logos (imagens-máscara) têm `aria-label`; decorativos têm `aria-hidden`.
+- Fontes **self-hosted** (`@fontsource`), `font-display: swap`, subset por
+  `unicode-range` — sem requisição bloqueante a terceiros.
+- Cursor/magnetismo ausentes em touch; fólio oculto `<760px`.
+- Alvo Lighthouse: 95+ em performance / acessibilidade / SEO.
 
 ---
 
@@ -338,56 +384,6 @@ O **mailto** (`contato@serifalabs.com`) é o CTA principal — sem JavaScript.
 
 Como alternativa, há um **formulário Netlify Forms** já escrito e **comentado**
 em `src/components/Closing.astro` (campos nome/e-mail/mensagem + honeypot
-`bot-field`, `action="/obrigado"`). Para ativar:
-
-1. descomente o `<form>` em `Closing.astro`;
-2. a página `src/pages/obrigado.astro` já existe;
-3. o Netlify detecta o form no HTML estático automaticamente;
-4. (opcional) ajuste headers/redirects em `netlify.toml`.
-
----
-
-## Acessibilidade & performance
-
-- HTML semântico com landmark `<main>`; foco de teclado visível
-  (`:focus-visible`) — **o cursor customizado não remove o outline**.
-- Accordion com `aria-expanded` / `aria-controls` / `aria-labelledby`.
-- Logos (imagens-máscara) têm `aria-label`; decorativos têm `aria-hidden`.
-- Fontes **self-hosted** (via `@fontsource`), com `font-display: swap` e subset
-  por `unicode-range` — sem requisição bloqueante a terceiros.
-- Responsivo idêntico ao original: lombada menor/mais clara no mobile, fólio
-  oculto `<760px`, cursor/magnetismo ausentes em touch.
-- Alvo Lighthouse: 95+ em performance/acessibilidade/SEO.
-
----
-
-## Deploy (Netlify)
-
-O projeto já vem com `netlify.toml`:
-
-```toml
-[build]
-  command = "npm run build"
-  publish = "dist"
-[build.environment]
-  NODE_VERSION = "22"
-```
-
-**Passo a passo:**
-
-1. Suba o repositório para o GitHub/GitLab (ou use `netlify deploy`).
-2. No Netlify: **Add new site → Import an existing project** e selecione o repo.
-   O `netlify.toml` já define build (`npm run build`) e publish (`dist`).
-3. Antes de publicar em produção, faça o **checklist de placeholders** acima e
-   troque o `site` em `astro.config.mjs` pelo domínio real (afeta canonical,
-   Open Graph, JSON-LD e o sitemap).
-4. `npm run build` deve terminar **sem erros** e `npm run preview` servir o site
-   corretamente (ambos já verificados).
-
-Deploy alternativo pela CLI:
-
-```bash
-npm i -g netlify-cli
-netlify deploy --build          # preview
-netlify deploy --build --prod   # produção
-```
+`bot-field`, `action="/obrigado"`). Para ativar: descomente o `<form>`; a página
+`src/pages/obrigado.astro` já existe; o Netlify detecta o form no HTML estático
+automaticamente.

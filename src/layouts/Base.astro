@@ -12,6 +12,8 @@ import '@fontsource-variable/inter/wght.css'; // corpo (400/500/600)
 import '@fontsource/michroma/400.css'; // o "LAB" do lockup
 import '../styles/global.css';
 import studio from '../data/studio.json';
+import WhatsappFab from '../components/WhatsappFab.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
 
 interface Props {
   title?: string;
@@ -32,6 +34,13 @@ const {
 const site = Astro.site ?? new URL('https://serifalabs.com');
 const canonical = new URL(path, site).href;
 const ogImageUrl = new URL(ogImage, site).href;
+
+// Google Analytics 4. O ID (formato G-XXXXXXX) fica em studio.json → analytics.
+// Só em build de produção — assim `astro dev` local não polui os relatórios.
+// Vazio = desligado. O carregamento é feito pelo ConsentBanner: o GA (e seus
+// cookies) só dispara depois do "Aceitar" — opt-in de acordo com a LGPD.
+const ga4 = studio.analytics?.ga4;
+const enableGa = Boolean(ga4) && import.meta.env.PROD;
 
 // JSON-LD: schema.org Organization + ProfessionalService, driven by studio.json.
 const sameAs = studio.social.filter((s) => s.url && s.url !== '#').map((s) => s.url);
@@ -119,5 +128,7 @@ const jsonLd = {
   </head>
   <body>
     <slot />
+    <WhatsappFab />
+    {enableGa && <ConsentBanner ga4={ga4} />}
   </body>
 </html>

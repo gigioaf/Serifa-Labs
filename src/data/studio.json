@@ -14,6 +14,9 @@
     { "label": "Instagram", "url": "https://www.instagram.com/serifalabs/" },
     { "label": "WhatsApp", "url": "https://wa.me/5513991059755" }
   ],
+  "analytics": {
+    "ga4": "G-8XK7PZPKY8"
+  },
   "stats": [
     { "n": "3", "l": "Projetos entregues em 2025" },
     { "n": "4", "l": "Especialidades sob o mesmo teto" },

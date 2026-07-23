@@ -1,0 +1,121 @@
+---
+// Banner de consentimento de cookies (LGPD) + carregamento do Google Analytics.
+//
+// Estratégia: opt-in real. O GA NÃO carrega — e nenhum cookie é criado — até o
+// visitante clicar em "Aceitar". Sem JS, nada roda (default seguro: sem rastreio).
+// A escolha fica em localStorage, então o banner só aparece na primeira visita.
+//
+// Só é renderizado pelo Base.astro quando há um ID de GA configurado e em build
+// de produção (studio.analytics.ga4 + import.meta.env.PROD).
+interface Props {
+  ga4: string;
+}
+const { ga4 } = Astro.props;
+---
+<div
+  class="consent"
+  id="consent"
+  role="dialog"
+  aria-modal="false"
+  aria-label="Aviso de cookies"
+  hidden
+>
+  <p class="consent-text">
+    Usamos cookies do <b>Google Analytics</b> para medir o desempenho do site e
+    melhorar sua experiência. Você decide.
+    <a class="consent-link" href="/privacidade/">Saiba mais</a>
+  </p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn ghost" id="consent-reject">Recusar</button>
+    <button type="button" class="consent-btn primary" id="consent-accept">Aceitar</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ ga4 }}>
+  (function () {
+    var KEY = 'serifa-consent';
+    var root = document.documentElement;
+    var el = document.getElementById('consent');
+
+    function loadGA() {
+      if (window.__gaLoaded) return;
+      window.__gaLoaded = true;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', ga4);
+    }
+
+    function dismiss() {
+      if (el) el.hidden = true;
+      root.classList.remove('consent-pending');
+    }
+
+    function reopen() {
+      if (el) {
+        el.hidden = false;
+        root.classList.add('consent-pending');
+      }
+    }
+
+    // Remove os cookies de análise já criados (revogação real no "Recusar").
+    function clearGA() {
+      var host = location.hostname;
+      var domains = ['', host, '.' + host];
+      var parts = host.split('.');
+      if (parts.length > 2) domains.push('.' + parts.slice(-2).join('.'));
+      document.cookie.split(';').forEach(function (c) {
+        var name = c.split('=')[0].trim();
+        if (name.indexOf('_ga') === 0 || name === '_gid') {
+          domains.forEach(function (d) {
+            document.cookie =
+              name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (d ? '; domain=' + d : '');
+          });
+        }
+      });
+    }
+
+    function choose(value) {
+      try {
+        localStorage.setItem(KEY, value);
+      } catch (e) {}
+      dismiss();
+      if (value === 'granted') loadGA();
+      else clearGA();
+    }
+
+    var stored = null;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch (e) {}
+
+    if (stored === 'granted') {
+      loadGA();
+    } else if (stored !== 'denied' && el) {
+      // Sem escolha registrada → mostra o banner.
+      el.hidden = false;
+      root.classList.add('consent-pending');
+    }
+
+    var accept = document.getElementById('consent-accept');
+    var reject = document.getElementById('consent-reject');
+    if (accept) accept.addEventListener('click', function () { choose('granted'); });
+    if (reject) reject.addEventListener('click', function () { choose('denied'); });
+
+    // Link "Cookies" no rodapé (data-consent-reopen) reabre o aviso para trocar
+    // a escolha a qualquer momento — requisito de revogação da LGPD.
+    document.querySelectorAll('[data-consent-reopen]').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        e.preventDefault();
+        reopen();
+      });
+    });
+  })();
+</script>
